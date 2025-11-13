@@ -6,7 +6,22 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema } from "@/lib/zod-schema";
+
 export default function SignUpPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema) })
+
+  function onSubmit(data: z.infer<typeof signUpSchema>) {
+    console.log(data)
+  }
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       {/* Left Image - hide on mobile */}
@@ -25,20 +40,26 @@ export default function SignUpPage() {
             Create Your FindMe Account
           </h1>
 
-          <form className="space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" type="text" placeholder="John Doe" />
+              <Input {...register("fullName")} id="name" type="text" placeholder="John Doe" />
+              {errors.fullName && <small className="text-red-500">{errors.fullName.message}</small>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@example.com" />
+              <Input {...register("email")} id="email" type="email" placeholder="you@example.com" />
+              {errors.email && <small className="text-red-500">{errors.email.message}</small>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="********" />
+              <Input {...register("password")} id="password" type="password" placeholder="********" />
+              {errors.password && <small className="text-red-500">{errors.password.message}</small>}
             </div>
 
             <Button
