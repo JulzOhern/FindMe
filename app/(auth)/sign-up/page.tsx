@@ -12,16 +12,31 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/lib/zod-schema";
 
 import { signIn } from "next-auth/react"
+import { useTransition } from "react";
+import { signUp } from "@/actions/sign-up";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, },
+    setError
   } = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema) })
+  const [isPending, startTransition] = useTransition();
 
   function onSubmit(data: z.infer<typeof signUpSchema>) {
-    console.log(data)
+    startTransition(async () => {
+      try {
+        const response = await signUp(data)
+        if (response?.error) setError("email", { message: response.error })
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Something went wrong")
+          console.log(error.message)
+        }
+      }
+    })
   }
 
   return (
@@ -66,6 +81,7 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
+              disabled={isPending}
               className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white"
             >
               Sign Up
@@ -83,6 +99,7 @@ export default function SignUpPage() {
           <Button
             onClick={() => signIn("google")}
             type="button"
+            disabled={isPending}
             className="w-full border border-gray-300 flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-gray-700"
           >
             <FcGoogle size={20} />
