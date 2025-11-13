@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc"; // Google icon
 
+import { signIn } from "next-auth/react"
+
 export default function SignInPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -53,6 +55,7 @@ export default function SignInPage() {
 
           {/* Google Sign-In Button */}
           <Button
+            onClick={() => signIn("google")}
             type="button"
             className="w-full border border-gray-300 flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-gray-700"
           >

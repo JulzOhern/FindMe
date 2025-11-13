@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/lib/zod-schema";
 
+import { signIn } from "next-auth/react"
+
 export default function SignUpPage() {
   const {
     register,
@@ -45,9 +47,9 @@ export default function SignUpPage() {
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input {...register("fullName")} id="name" type="text" placeholder="John Doe" />
-              {errors.fullName && <small className="text-red-500">{errors.fullName.message}</small>}
+              <Label htmlFor="name">Name</Label>
+              <Input {...register("name")} id="name" type="text" placeholder="John Doe" />
+              {errors.name && <small className="text-red-500">{errors.name.message}</small>}
             </div>
 
             <div className="space-y-2">
@@ -79,6 +81,7 @@ export default function SignUpPage() {
 
           {/* Google Sign-Up Button */}
           <Button
+            onClick={() => signIn("google")}
             type="button"
             className="w-full border border-gray-300 flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-gray-700"
           >
