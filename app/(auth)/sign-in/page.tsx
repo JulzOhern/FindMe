@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
   async function handleOauthSignIn(provider: string) {
-    await signIn(provider, { callbackUrl: "/" })
+    await signIn(provider)
       .then(() => console.log("Sign-in successful"))
       .catch(error => console.error(error));
   }
