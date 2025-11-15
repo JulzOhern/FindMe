@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import { Sidebar } from '@/components/sidebar';
 import { getMe } from '@/GET/me'
 import React from 'react'
 
@@ -8,6 +9,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   return (
     <div>
       <Header me={me} />
+      <Sidebar />
       {children}
     </div>
   )
