@@ -1,8 +1,6 @@
-"use client"
-
 import { LatLngExpression } from 'leaflet'
 import L from 'leaflet';
-import { MapContainer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, Marker, Popup, ZoomControl } from 'react-leaflet'
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -47,10 +45,12 @@ export default function Map() {
   return (
     <>
       <MapContainer
-        style={{ flex: 1 }}
+        style={{ minHeight: '100vh' }}
         center={position}
         zoom={13}
+        zoomControl={false}
         scrollWheelZoom={true}
+        fadeAnimation
       >
         <Marker position={position}>
           <Popup>
@@ -58,6 +58,7 @@ export default function Map() {
           </Popup>
         </Marker>
 
+        <ZoomControl position='bottomleft' />
         <LayersControlSection />
       </MapContainer>
     </>

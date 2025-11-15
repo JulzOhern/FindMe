@@ -1,43 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { User } from "@/generated/prisma/client";
 import { Sidebar } from "./sidebar";
+import Link from "next/link";
 
-type HeaderProps = {
+type FloatingElementsProps = {
   me: User | null;
-}
+};
 
-export function Header({ me }: HeaderProps) {
+export function Header({ me }: FloatingElementsProps) {
   return (
-    <header className="w-full border-b bg-white/70 backdrop-blur-md shadow-sm fixed top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/find-me.png"
-            alt="Find Me"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
-          <span className="text-xl font-bold tracking-tight">FindMe</span>
-        </Link>
+    <>
+      {/* Logo + Title */}
+      <Link
+        href="/"
+        className="fixed top-4 left-4 w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg z-1000 hover:scale-105 transition-transform duration-200"
+      >
+        <Image
+          src="/find-me.png"
+          alt="Find Me"
+          width={30}
+          height={30}
+          priority
+          className="rounded-full"
+        />
+      </Link>
 
-        {/* Profile avatar */}
-        <div className="flex items-center gap-5">
-          <Sidebar />
 
-          <Image
-            src={me?.image || "/default-avatar.png"}
-            alt="User"
-            width={36}
-            height={36}
-            className="rounded-full border"
-          />
-        </div>
+      {/* Profile Avatar */}
+      <div className="fixed top-4 right-4 flex items-center gap-3 px-3 py-2 z-1000">
+        <Sidebar />
+        <Image
+          src={me?.image || "/default-avatar.png"}
+          alt={me?.name || "Avatar"}
+          width={36}
+          height={36}
+          className="rounded-full"
+        />
       </div>
-    </header>
+    </>
   );
 }

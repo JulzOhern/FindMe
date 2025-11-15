@@ -3,7 +3,7 @@ import { TileLayer } from 'react-leaflet/TileLayer'
 
 export function LayersControlSection() {
   return (
-    <LayersControl position="topright">
+    <LayersControl position="bottomright">
       {/* Google Maps – Street Map */}
       <LayersControl.BaseLayer checked name="Google Maps - Street">
         <TileLayer

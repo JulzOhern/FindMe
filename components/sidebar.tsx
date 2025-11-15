@@ -6,11 +6,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { Button } from "./ui/button"
+import { Menu } from "lucide-react"
 
 export function Sidebar() {
   return (
     <Sheet>
-      <SheetTrigger>Open</SheetTrigger>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon-sm">
+          <Menu />
+        </Button>
+      </SheetTrigger>
       <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>Are you absolutely sure?</SheetTitle>
