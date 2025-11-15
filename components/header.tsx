@@ -11,8 +11,8 @@ type HeaderProps = {
 
 export function Header({ me }: HeaderProps) {
   return (
-    <header className="w-full border-b bg-white/70 backdrop-blur-md shadow-sm fixed z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+    <header className="w-full border-b bg-white/70 backdrop-blur-md shadow-sm fixed top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
