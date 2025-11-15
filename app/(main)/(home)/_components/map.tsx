@@ -2,11 +2,13 @@
 
 import { LatLngExpression } from 'leaflet'
 import L from 'leaflet';
-import { LayersControl, MapContainer, Marker, Popup } from 'react-leaflet'
-import { TileLayer } from 'react-leaflet/TileLayer'
+import { MapContainer, Marker, Popup } from 'react-leaflet'
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { LayersControlSection } from './layers-control-section';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 let DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
@@ -18,78 +20,45 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function Map() {
-  const center: LatLngExpression | undefined = [51.505, -0.09]
+  const [position, setPosition] = useState<LatLngExpression | null>(null)
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser')
+      return
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords
+        setPosition([latitude, longitude])
+      },
+      (err) => console.error(err),
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+    )
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
+
+  if (!position) return null
 
   return (
     <>
       <MapContainer
         style={{ flex: 1 }}
-        center={center}
+        center={position}
         zoom={13}
         scrollWheelZoom={true}
       >
-        <TileLayer
-          attribution='&copy; Google Maps'
-          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-          subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-        />
-
-        <Marker position={[51.505, -0.09]}>
+        <Marker position={position}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>
         </Marker>
 
-        <LayersControl position="topright">
-          {/* Google Maps – Street Map */}
-          <LayersControl.BaseLayer checked name="Google Maps - Street">
-            <TileLayer
-              attribution="&copy; Google Maps"
-              url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-              maxZoom={20}
-              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-            />
-          </LayersControl.BaseLayer>
-
-          {/* Google Maps – Satellite */}
-          <LayersControl.BaseLayer name="Google Maps - Satellite">
-            <TileLayer
-              attribution="&copy; Google Maps"
-              url="http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-              maxZoom={20}
-              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-            />
-          </LayersControl.BaseLayer>
-
-          {/* Google Maps – Hybrid (Satellite + Labels) */}
-          <LayersControl.BaseLayer name="Google Maps - Hybrid">
-            <TileLayer
-              attribution="&copy; Google Maps"
-              url="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}"
-              maxZoom={20}
-              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-            />
-          </LayersControl.BaseLayer>
-
-          {/* Google Maps – Terrain */}
-          <LayersControl.BaseLayer name="Google Maps - Terrain">
-            <TileLayer
-              attribution="&copy; Google Maps"
-              url="http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
-              maxZoom={20}
-              subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
-            />
-          </LayersControl.BaseLayer>
-
-          {/* OpenStreetMap */}
-          <LayersControl.BaseLayer name="OpenStreetMap">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              maxZoom={19}
-            />
-          </LayersControl.BaseLayer>
-        </LayersControl>
+        <LayersControlSection />
       </MapContainer>
     </>
   )
