@@ -8,6 +8,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useSideBarStore } from "@/lib/zustand"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PeopleTab } from "./people-tab"
+
+const TABS = ["friends", "friend-request", "people"]
 
 export function Sidebar() {
   const isOpen = useSideBarStore(state => state.isOpen)
@@ -15,28 +19,53 @@ export function Sidebar() {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggle}>
-      {/* <SheetTrigger asChild>
-        <Button variant="outline" size="icon-sm">
-          <Menu />
-        </Button>
-      </SheetTrigger> */}
       <SheetContent
         side="left"
-        className="flex flex-col gap-0 z-1001"
-      >
-        <SheetHeader>
-          <SheetTitle>Friend List</SheetTitle>
-          <SheetDescription>
-            This action cannot be undone. This will permanently delete your account
-            and remove your data from our servers.
-          </SheetDescription>
+        className="flex flex-col gap-4 border-r bg-white sm:w-3/4 w-full shadow-sm z-1001">
+        {/* Header */}
+        <SheetHeader className="pb-2 border-b">
+          <SheetTitle className="text-xl font-semibold tracking-tight">
+            Friend List
+          </SheetTitle>
+          <SheetDescription className="hidden" />
         </SheetHeader>
 
-        <div className="px-4 overflow-auto">
-          <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem minima facilis non placeat ipsam, cupiditate error. Error officia, eligendi quaerat praesentium rerum culpa, quo hic accusamus optio non unde. Id?
-          </p>
-        </div>
+        {/* Tabs */}
+        <Tabs
+          defaultValue="friends"
+          className="flex-1 flex flex-col px-3"
+        >
+          <TabsList className="w-full rounded-lg border">
+            {TABS.map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                className="data-[state=active]:bg-white data-[state=active]:shadow-sm capitalize"
+              >
+                {tab.split("-").join(" ")}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* Friends */}
+          <TabsContent
+            value="friends"
+            className="text-sm text-gray-600 px-1"
+          >
+            No friends yet.
+          </TabsContent>
+
+          {/* Friend Requests */}
+          <TabsContent
+            value="friend-request"
+            className="text-sm text-gray-600 px-1"
+          >
+            No friend requests.
+          </TabsContent>
+
+          {/* People */}
+          <PeopleTab />
+        </Tabs>
       </SheetContent>
     </Sheet>
   )
