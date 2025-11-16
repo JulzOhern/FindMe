@@ -8,13 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
+
+  accounts         Account[]
+  requestedFriends Friend[]  @relation("requestedFriends")
+  receivedFriends  Friend[]  @relation("receivedFriends")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -40,4 +49,16 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Friend {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  requesterId String       @db.ObjectId
+  receiverId  String       @db.ObjectId
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  requester User @relation("requestedFriends", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver  User @relation("receivedFriends", fields: [receiverId], references: [id], onDelete: Cascade)
 }
