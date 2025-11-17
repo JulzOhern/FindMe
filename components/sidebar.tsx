@@ -10,10 +10,15 @@ import {
 import { useSideBarStore } from "@/lib/zustand"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PeopleTab } from "./people-tab"
+import { User } from "@/generated/prisma/client"
 
 const TABS = ["friends", "friend-request", "people"]
 
-export function Sidebar() {
+type SidebarProps = {
+  me: User | null;
+}
+
+export function Sidebar({ me }: SidebarProps) {
   const isOpen = useSideBarStore(state => state.isOpen)
   const toggle = useSideBarStore(state => state.toggle)
 
@@ -40,7 +45,7 @@ export function Sidebar() {
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-sm capitalize"
+                className="capitalize"
               >
                 {tab.split("-").join(" ")}
               </TabsTrigger>
@@ -64,7 +69,7 @@ export function Sidebar() {
           </TabsContent>
 
           {/* People */}
-          <PeopleTab />
+          <PeopleTab me={me} />
         </Tabs>
       </SheetContent>
     </Sheet>

@@ -1,21 +1,35 @@
-import Image from 'next/image'
-import { TabsContent } from './ui/tabs'
-import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image';
+import { TabsContent } from './ui/tabs';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { Button } from './ui/button';
+import { Friend, User } from '@/generated/prisma/client';
+import { acceptRequest, addFriend, cancelRequest, declineRequest, unFriend } from '@/actions/add-friend';
+import { cn } from '@/lib/utils';
 
 async function getPeople(search: string) {
   const response = await fetch(`/api/people?search=${search}`);
-  return response.json();
+  const data = await response.json();
+  return data as (User & { receivedFriends: Friend[], requestedFriends: Friend[] })[] | null;
 }
 
-export function PeopleTab() {
+type PeopleTabProps = {
+  me: User | null
+}
+
+type PeopleCardProps = {
+  item: User & { receivedFriends: Friend[], requestedFriends: Friend[] }
+  me: User | null
+}
+
+export function PeopleTab({ me }: PeopleTabProps) {
   const [search, setSearch] = useState("");
   const [debounceSearch, setDebounceSearch] = useState("")
 
   const { data: people } = useQuery({
     queryKey: ['people', debounceSearch],
     queryFn: () => getPeople(debounceSearch)
-  })
+  });
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -54,7 +68,7 @@ export function PeopleTab() {
             type="text"
             onChange={e => setSearch(e.target.value)}
             value={search}
-            placeholder="Search people..."
+            placeholder="Search people by their name or email"
             className="bg-transparent outline-none w-full text-sm"
           />
         </div>
@@ -66,36 +80,109 @@ export function PeopleTab() {
         </p>
       )}
 
-      {people?.map((item: any) => (
-        <div
+      {people?.map((item) => (
+        <PeopleCard
           key={item.id}
-          className="flex items-center justify-between p-3 rounded-xl border bg-white shadow-sm hover:shadow-md transition-shadow"
-        >
-          {/* Left: Avatar + name */}
-          <div className="flex items-center gap-3">
-            <Image
-              src={item.image ?? ""}
-              alt={item.name ?? "Unknown user"}
-              width={200}
-              height={200}
-              className="w-10 h-10 rounded-full object-cover border"
-            />
-            <div className="flex flex-col">
-              <span className="font-medium text-gray-800">
-                {item.name ?? "Unknown user"}
-              </span>
-              <span className="text-xs text-gray-500">
-                {item.email}
-              </span>
-            </div>
-          </div>
-
-          {/* Right: Add Friend Button */}
-          <button className="px-3 py-1.5 text-sm rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] transition-all">
-            Add
-          </button>
-        </div>
+          item={item}
+          me={me}
+        />
       ))}
     </TabsContent>
+  )
+}
+
+function PeopleCard({ item, me }: PeopleCardProps) {
+  const queryClient = useQueryClient();
+  const myFriendRequest = item.receivedFriends.find(friend => (
+    friend.requesterId === me?.id
+  ))
+  const receivedFriendRequest = item.requestedFriends.find(friend => (
+    friend.receiverId === me?.id
+  ))
+
+  const isAddFriend = (!myFriendRequest && !receivedFriendRequest)
+  const isCancelRequest = myFriendRequest?.status === "PENDING" && !receivedFriendRequest
+  const isAcceptRequest = receivedFriendRequest?.status === "PENDING" && receivedFriendRequest
+  const isUnFriend = myFriendRequest?.status === "ACCEPTED" || receivedFriendRequest?.status === "ACCEPTED"
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const receiverId = item.id;
+      if (isAddFriend) return await addFriend(receiverId);
+      if (isCancelRequest) return await cancelRequest(receiverId);
+      if (isAcceptRequest) return await acceptRequest(receiverId);
+      if (isUnFriend) return await unFriend(receiverId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["people"] })
+    }
+  })
+
+  const mutationDecline = useMutation({
+    mutationFn: async () => {
+      const requesterId = item.id;
+      const data = await declineRequest(requesterId);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["people"] })
+    }
+  })
+
+  return (
+    <div className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm hover:shadow-md transition">
+      {/* Avatar */}
+      <Image
+        src={item.image ?? ""}
+        alt={item.name ?? "Unknown user"}
+        width={200}
+        height={200}
+        className="w-12 h-12 rounded-full object-cover border"
+      />
+
+      {/* Right content */}
+      <div className="flex flex-col flex-1">
+        <div className="flex flex-col">
+          <span className="text-base font-semibold text-gray-900 line-clamp-1">
+            {item.name ?? "Unknown user"}
+          </span>
+
+          <span className="text-sm text-gray-500 line-clamp-1">
+            {item.email}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending || mutationDecline.isPending}
+            className={cn(
+              "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
+              isAddFriend && "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]",
+              isCancelRequest && "bg-neutral-500 text-white hover:bg-neutral-600 active:scale-[0.98]",
+              isAcceptRequest && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
+              isUnFriend && "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
+            )}
+          >
+            {isAddFriend && "Add Friend"}
+            {isCancelRequest && "Cancel Request"}
+            {isAcceptRequest && "Accept Request"}
+            {isUnFriend && "Unfriend"}
+          </Button>
+
+          {receivedFriendRequest && receivedFriendRequest.status === "PENDING" && (
+            <Button
+              onClick={() => mutationDecline.mutate()}
+              disabled={mutationDecline.isPending}
+              className={cn(
+                "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium bg-red-500 hover:bg-red-600 transition-all",
+              )}
+            >
+              Declined
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

@@ -9,7 +9,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   return (
     <div>
       <Header me={me} />
-      <Sidebar />
+      <Sidebar me={me} />
       {children}
     </div>
   )

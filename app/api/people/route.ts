@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
         NOT: {
           id: me.id
         }
+      },
+      include: {
+        receivedFriends: true,
+        requestedFriends: true
       }
     })
 
