@@ -7,6 +7,18 @@ import { Friend, User } from '@/generated/prisma/client';
 import { acceptRequest, addFriend, cancelRequest, declineRequest, unFriend } from '@/actions/people';
 import { cn } from '@/lib/utils';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 async function getPeople(search: string) {
   const response = await fetch(`/api/people?search=${search}`);
   const data = await response.json();
@@ -130,6 +142,7 @@ function PeopleCard({ item, me }: PeopleCardProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friend-request"] });
       queryClient.invalidateQueries({ queryKey: ["people"] });
+      queryClient.invalidateQueries({ queryKey: ["friend"] });
     }
   })
 
@@ -157,22 +170,55 @@ function PeopleCard({ item, me }: PeopleCardProps) {
         </div>
 
         <div className="flex items-center gap-1">
-          <Button
-            onClick={() => mutation.mutate()}
-            disabled={mutation.isPending || mutationDecline.isPending}
-            className={cn(
-              "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
-              isAddFriend && "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]",
-              isCancelRequest && "bg-neutral-500 text-white hover:bg-neutral-600 active:scale-[0.98]",
-              isAcceptRequest && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
-              isUnFriend && "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
-            )}
-          >
-            {isAddFriend && "Add Friend"}
-            {isCancelRequest && "Cancel Request"}
-            {isAcceptRequest && "Accept Request"}
-            {isUnFriend && "Unfriend"}
-          </Button>
+          {!isUnFriend && (
+            <Button
+              onClick={() => mutation.mutate()}
+              disabled={mutation.isPending || mutationDecline.isPending}
+              className={cn(
+                "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
+                isAddFriend && "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]",
+                isCancelRequest && "bg-neutral-500 text-white hover:bg-neutral-600 active:scale-[0.98]",
+                isAcceptRequest && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
+                isUnFriend && "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
+              )}
+            >
+              {isAddFriend && "Add Friend"}
+              {isCancelRequest && "Cancel Request"}
+              {isAcceptRequest && "Accept Request"}
+              {isUnFriend && "Unfriend"}
+            </Button>
+          )}
+
+          {isUnFriend && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  className="mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
+                >
+                  Unfriend
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure you want to unfriend {item.name}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    They will be removed from your friends list. You'll need to send a new friend request if you want to connect again.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => mutation.mutate()}
+                    disabled={mutation.isPending || mutationDecline.isPending}
+                    className="bg-red-600 hover:bg-red-700 duration-200"
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
 
           {receivedFriendRequest && receivedFriendRequest.status === "PENDING" && (
             <Button

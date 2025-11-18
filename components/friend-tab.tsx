@@ -7,6 +7,18 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { unFriend } from "@/actions/friend";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
   const data = await res.json();
@@ -113,16 +125,37 @@ export function FriendTab() {
               </div>
 
               <div className="flex items-center gap-1">
-                <Button
-                  onClick={() => mutationUnFriend.mutate(item.id)}
-                  disabled={mutationUnFriend.isPending}
-                  variant="destructive"
-                  className={cn(
-                    "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all"
-                  )}
-                >
-                  {item.status === "PENDING" ? "Accept Request" : "Unfriend"}
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      className={cn(
+                        "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all"
+                      )}
+                    >
+                      Unfriend
+                    </Button>
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure you want to unfriend {item.requester?.name}?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        They will be removed from your friends list. You'll need to send a new friend request if you want to connect again.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => mutationUnFriend.mutate(item.id)}
+                        disabled={mutationUnFriend.isPending}
+                        className="bg-red-600 hover:bg-red-700 duration-200"
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
 
                 <Button
                   variant="default"

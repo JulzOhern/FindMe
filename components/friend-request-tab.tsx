@@ -43,6 +43,7 @@ export function FriendRequestTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["people"] })
       queryClient.invalidateQueries({ queryKey: ["friend-request"] });
+      queryClient.invalidateQueries({ queryKey: ["friend"] });
     }
   })
 
