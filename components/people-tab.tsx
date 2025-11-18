@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Friend, User } from '@/generated/prisma/client';
-import { acceptRequest, addFriend, cancelRequest, declineRequest, unFriend } from '@/actions/add-friend';
+import { acceptRequest, addFriend, cancelRequest, declineRequest, unFriend } from '@/actions/people';
 import { cn } from '@/lib/utils';
 
 async function getPeople(search: string) {
@@ -44,10 +44,10 @@ export function PeopleTab({ me }: PeopleTabProps) {
   return (
     <TabsContent
       value="people"
-      className="flex flex-col gap-2 mt-2 overflow-y-auto pr-1"
+      className="flex flex-col min-h-0"
     >
       {/* Search bar */}
-      <div className="sticky top-0 bg-white pb-2 z-10">
+      <div className="bg-white pb-2">
         <div className="flex items-center gap-2 w-full px-3 py-2 border rounded-xl bg-gray-100 focus-within:bg-white focus-within:border-gray-300 transition">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -80,13 +80,15 @@ export function PeopleTab({ me }: PeopleTabProps) {
         </p>
       )}
 
-      {people?.map((item) => (
-        <PeopleCard
-          key={item.id}
-          item={item}
-          me={me}
-        />
-      ))}
+      <div className='flex flex-col gap-2 overflow-auto'>
+        {people?.map((item) => (
+          <PeopleCard
+            key={item.id}
+            item={item}
+            me={me}
+          />
+        ))}
+      </div>
     </TabsContent>
   )
 }
@@ -114,6 +116,7 @@ function PeopleCard({ item, me }: PeopleCardProps) {
       if (isUnFriend) return await unFriend(receiverId);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friend-request"] });
       queryClient.invalidateQueries({ queryKey: ["people"] })
     }
   })
@@ -125,12 +128,13 @@ function PeopleCard({ item, me }: PeopleCardProps) {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["people"] })
+      queryClient.invalidateQueries({ queryKey: ["friend-request"] });
+      queryClient.invalidateQueries({ queryKey: ["people"] });
     }
   })
 
   return (
-    <div className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm hover:shadow-md transition">
+    <div className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm">
       {/* Avatar */}
       <Image
         src={item.image ?? ""}
@@ -147,7 +151,7 @@ function PeopleCard({ item, me }: PeopleCardProps) {
             {item.name ?? "Unknown user"}
           </span>
 
-          <span className="text-sm text-gray-500 line-clamp-1">
+          <span className="text-sm text-gray-500 line-clamp-">
             {item.email}
           </span>
         </div>
