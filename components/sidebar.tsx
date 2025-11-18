@@ -8,11 +8,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useSideBarStore } from "@/lib/zustand"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PeopleTab } from "./people-tab"
 import { User } from "@/generated/prisma/client"
 import { FriendRequestTab } from "./friend-request-tab"
 import { FriendTab } from "./friend-tab"
+import { useState } from "react"
+import { cn } from "@/lib/utils"
+import approx from "approximate-number";
 
 const TABS = ["friend", "friend-request", "people"]
 
@@ -23,6 +26,7 @@ type SidebarProps = {
 export function Sidebar({ me }: SidebarProps) {
   const isOpen = useSideBarStore(state => state.isOpen)
   const toggle = useSideBarStore(state => state.toggle)
+  const [friendRequestCount, setFriendRequestCount] = useState(0)
 
   return (
     <Sheet open={isOpen} onOpenChange={toggle}>
@@ -50,12 +54,23 @@ export function Sidebar({ me }: SidebarProps) {
                 className="capitalize"
               >
                 {tab.split("-").join(" ")}
+                <span
+                  className={cn(
+                    "rounded-full text-red-500 text-xs",
+                    friendRequestCount === 0 && "hidden",
+                    tab !== "friend-request" && "hidden"
+                  )}
+                >
+                  {approx(friendRequestCount)}
+                </span>
               </TabsTrigger>
             ))}
           </TabsList>
 
           <FriendTab />
-          <FriendRequestTab />
+          <FriendRequestTab
+            setFriendRequestCount={setFriendRequestCount}
+          />
           <PeopleTab me={me} />
         </Tabs>
       </SheetContent>
