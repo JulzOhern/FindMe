@@ -8,7 +8,7 @@ import { LayersControlSection } from './layers-control-section';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-let DefaultIcon = L.icon({
+const DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
   shadowUrl: iconShadow as unknown as string,
   iconSize: [25, 41],

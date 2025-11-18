@@ -10,6 +10,11 @@ type ContextType = {
   setOnlineUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
+type MemberType = {
+  id: string
+  info: User
+}
+
 const Context = createContext({} as ContextType);
 
 export function OnlineUsersProvider({ children }: { children: React.ReactNode }) {
@@ -22,17 +27,17 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     // Bind to presence events
     channel.bind("pusher:subscription_succeeded", (members: Members) => {
       const users: User[] = [];
-      members.each((member: any) => {
+      members.each((member: MemberType) => {
         users.push(member.info);
       });
       setOnlineUsers(users);
     });
 
-    channel.bind("pusher:member_added", (member: any) => {
+    channel.bind("pusher:member_added", (member: MemberType) => {
       setOnlineUsers((prev) => [...prev, member?.info]);
     });
 
-    channel.bind("pusher:member_removed", (member: any) => {
+    channel.bind("pusher:member_removed", (member: MemberType) => {
       setOnlineUsers((prev) => prev.filter((u) => u.id !== member.id));
     });
 

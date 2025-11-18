@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { acceptRequest, declineRequest } from '@/actions/friend-request';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 async function getFriendRequest(search: string) {
   const res = await fetch("/api/friend-request?search=" + search);
@@ -14,10 +14,10 @@ async function getFriendRequest(search: string) {
 }
 
 type FriendRequestTabProps = {
-  setFriendRequestCount: React.Dispatch<React.SetStateAction<number>>
+  getFriendRequestCount: (count: number) => void
 }
 
-export function FriendRequestTab({ setFriendRequestCount }: FriendRequestTabProps) {
+export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProps) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [debounceSearch, setDebounceSearch] = useState("");
@@ -40,8 +40,8 @@ export function FriendRequestTab({ setFriendRequestCount }: FriendRequestTabProp
   })
 
   useEffect(() => {
-    setFriendRequestCount(friendRequest?.length || 0);
-  }, [friendRequest?.length]);
+    getFriendRequestCount(friendRequest?.length || 0);
+  }, [friendRequest?.length, getFriendRequestCount]);
 
   const mutationAcceptRequest = useMutation({
     mutationFn: async (id: string) => {

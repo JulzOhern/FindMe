@@ -29,7 +29,7 @@ export default function SignInPage() {
             Welcome to FindMe
           </h1>
           <p className="text-gray-500 mb-8 text-sm">
-            Track your friend's locations in real-time and see their route directions.
+            Track your friend&apos;s locations in real-time and see their route directions.
             Stay connected and never get lost again.
           </p>
 

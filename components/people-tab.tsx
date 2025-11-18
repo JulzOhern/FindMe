@@ -203,7 +203,7 @@ function PeopleCard({ item, me }: PeopleCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure you want to unfriend {item.name}?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    They will be removed from your friends list. You'll need to send a new friend request if you want to connect again.
+                    They will be removed from your friends list. You&apos;ll need to send a new friend request if you want to connect again.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
