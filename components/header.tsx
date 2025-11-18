@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 import { useSideBarStore } from "@/lib/zustand";
-import { signOut } from "next-auth/react";
 
 type FloatingElementsProps = {
   me: User | null;
@@ -35,9 +34,6 @@ export function Header({ me }: FloatingElementsProps) {
 
       {/* Profile Avatar */}
       <div className="fixed top-4 right-4 flex items-center gap-3 px-3 py-2 z-1000">
-        <Button onClick={() => signOut()}>
-          Logout
-        </Button>
         <Button
           onClick={() => toggle()}
           variant="outline"
@@ -45,13 +41,16 @@ export function Header({ me }: FloatingElementsProps) {
         >
           <Menu />
         </Button>
-        <Image
-          src={me?.image || "/default-avatar.png"}
-          alt={me?.name || "Avatar"}
-          width={36}
-          height={36}
-          className="rounded-full"
-        />
+
+        <Link href={`/profile/${me?.id}`}>
+          <Image
+            src={me?.image || "/default-avatar.png"}
+            alt={me?.name || "Avatar"}
+            width={36}
+            height={36}
+            className="rounded-full"
+          />
+        </Link>
       </div>
     </>
   );
