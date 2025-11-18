@@ -12,8 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PeopleTab } from "./people-tab"
 import { User } from "@/generated/prisma/client"
 import { FriendRequestTab } from "./friend-request-tab"
+import { FriendTab } from "./friend-tab"
 
-const TABS = ["friends", "friend-request", "people"]
+const TABS = ["friend", "friend-request", "people"]
 
 type SidebarProps = {
   me: User | null;
@@ -53,14 +54,7 @@ export function Sidebar({ me }: SidebarProps) {
             ))}
           </TabsList>
 
-          {/* Friends */}
-          <TabsContent
-            value="friends"
-            className="text-sm text-gray-600 px-1"
-          >
-            No friends yet.
-          </TabsContent>
-
+          <FriendTab />
           <FriendRequestTab />
           <PeopleTab me={me} />
         </Tabs>
