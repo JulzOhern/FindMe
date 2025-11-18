@@ -7,7 +7,8 @@ const APP_SECRET = process.env.PUSHER_APP_SECRET;
 const APP_CLUSTER = process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER;
 
 export const pusherClient = new PusherClient(APP_KEY!, {
-  cluster: APP_CLUSTER!
+  cluster: APP_CLUSTER!,
+  authEndpoint: "/api/pusher/auth"
 })
 
 export const pusherServer = new Pusher({
