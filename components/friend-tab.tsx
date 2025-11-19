@@ -25,7 +25,11 @@ export async function getFriend(debounceSearch: string) {
   return data as (Friend & { requester: User | null, receiver: User | null })[]
 }
 
-export function FriendTab() {
+type FriendType = {
+  me: User | null
+}
+
+export function FriendTab({ me }: FriendType) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("")
   const [debounceSearch, setDebounceSearch] = useState("")
@@ -99,78 +103,82 @@ export function FriendTab() {
       )}
 
       <div className='flex flex-col gap-2 overflow-auto'>
-        {friends?.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
-          >
-            {/* Avatar */}
-            <Image
-              src={item.requester?.image ?? ""}
-              alt={item.requester?.name ?? "Unknown user"}
-              width={200}
-              height={200}
-              className="w-12 h-12 rounded-full object-cover border"
-            />
+        {friends?.map((item) => {
+          const myFriend = item.requester?.id === me?.id ? item.receiver : item.requester
 
-            <div className="flex flex-col flex-1">
-              <div className="flex flex-col">
-                <span className="text-base font-semibold text-gray-900 line-clamp-1">
-                  {item.requester?.name ?? "Unknown user"}
-                </span>
+          return (
+            <div
+              key={item.id}
+              className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
+            >
+              {/* Avatar */}
+              <Image
+                src={myFriend?.image ?? ""}
+                alt={myFriend?.name ?? "Unknown user"}
+                width={200}
+                height={200}
+                className="w-12 h-12 rounded-full object-cover border"
+              />
 
-                <span className="text-sm text-gray-500 line-clamp-">
-                  {item.requester?.email}
-                </span>
-              </div>
+              <div className="flex flex-col flex-1">
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold text-gray-900 line-clamp-1">
+                    {myFriend?.name ?? "Unknown user"}
+                  </span>
 
-              <div className="flex items-center gap-1">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      className={cn(
-                        "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all"
-                      )}
-                    >
-                      Unfriend
-                    </Button>
-                  </AlertDialogTrigger>
+                  <span className="text-sm text-gray-500 line-clamp-">
+                    {myFriend?.email}
+                  </span>
+                </div>
 
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure you want to unfriend {item.requester?.name}?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        They will be removed from your friends list. You&apos;ll need to send a new friend request if you want to connect again.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => mutationUnFriend.mutate(item.id)}
-                        disabled={mutationUnFriend.isPending}
-                        className="bg-red-600 hover:bg-red-700 duration-200"
+                <div className="flex items-center gap-1">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        className={cn(
+                          "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all"
+                        )}
                       >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        Unfriend
+                      </Button>
+                    </AlertDialogTrigger>
 
-                <Button
-                  variant="default"
-                  className={cn(
-                    "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all",
-                    "bg-blue-600 hover:bg-blue-700 text-white shadow-sm",
-                    "active:scale-95"
-                  )}
-                >
-                  Track
-                </Button>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to unfriend {myFriend?.name}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          They will be removed from your friends list. You&apos;ll need to send a new friend request if you want to connect again.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => mutationUnFriend.mutate(item.id)}
+                          disabled={mutationUnFriend.isPending}
+                          className="bg-red-600 hover:bg-red-700 duration-200"
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <Button
+                    variant="default"
+                    className={cn(
+                      "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all",
+                      "bg-blue-600 hover:bg-blue-700 text-white shadow-sm",
+                      "active:scale-95"
+                    )}
+                  >
+                    Track
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </TabsContent>
   )

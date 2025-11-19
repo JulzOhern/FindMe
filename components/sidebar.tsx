@@ -71,7 +71,9 @@ export function Sidebar({ me }: SidebarProps) {
             ))}
           </TabsList>
 
-          <FriendTab />
+          <FriendTab
+            me={me}
+          />
           <FriendRequestTab
             getFriendRequestCount={getFriendRequestCount}
           />
