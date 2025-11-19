@@ -120,3 +120,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.leaflet-routing-container {
+  top: 65px;   /* or whatever you want */
+  right: 20px;
+}
