@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useOnlineUsersContext } from "@/context/online-users";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -30,6 +31,7 @@ type FriendType = {
 }
 
 export function FriendTab({ me }: FriendType) {
+  const { onlineUsers } = useOnlineUsersContext();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("")
   const [debounceSearch, setDebounceSearch] = useState("")
@@ -104,7 +106,8 @@ export function FriendTab({ me }: FriendType) {
 
       <div className='flex flex-col gap-2 overflow-auto'>
         {friends?.map((item) => {
-          const myFriend = item.requester?.id === me?.id ? item.receiver : item.requester
+          const myFriend = item.requester?.id === me?.id ? item.receiver : item.requester;
+          const isOnline = onlineUsers.find(user => user.id === myFriend?.id);
 
           return (
             <div
@@ -112,13 +115,19 @@ export function FriendTab({ me }: FriendType) {
               className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
             >
               {/* Avatar */}
-              <Image
-                src={myFriend?.image ?? ""}
-                alt={myFriend?.name ?? "Unknown user"}
-                width={200}
-                height={200}
-                className="w-12 h-12 rounded-full object-cover border"
-              />
+              <div className="relative shrink-0">
+                <Image
+                  src={myFriend?.image ?? ""}
+                  alt={myFriend?.name ?? "Unknown user"}
+                  width={200}
+                  height={200}
+                  className="w-12 h-12 rounded-full object-cover border"
+                />
+
+                {isOnline && (
+                  <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
+                )}
+              </div>
 
               <div className="flex flex-col flex-1">
                 <div className="flex flex-col">

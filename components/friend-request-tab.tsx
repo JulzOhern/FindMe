@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { acceptRequest, declineRequest } from '@/actions/friend-request';
 import { useEffect, useState } from 'react';
+import { useOnlineUsersContext } from '@/context/online-users';
 
 async function getFriendRequest(search: string) {
   const res = await fetch("/api/friend-request?search=" + search);
@@ -18,6 +19,7 @@ type FriendRequestTabProps = {
 }
 
 export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProps) {
+  const { onlineUsers } = useOnlineUsersContext();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [debounceSearch, setDebounceSearch] = useState("");
@@ -106,58 +108,68 @@ export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProp
       )}
 
       <div className='flex flex-col gap-2 overflow-auto'>
-        {friendRequest?.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
-          >
-            {/* Avatar */}
-            <Image
-              src={item.requester?.image ?? ""}
-              alt={item.requester?.name ?? "Unknown user"}
-              width={200}
-              height={200}
-              className="w-12 h-12 rounded-full object-cover border"
-            />
+        {friendRequest?.map((item) => {
+          const isOnline = onlineUsers.find(user => user.id === item.requester?.id);
 
-            <div className="flex flex-col flex-1">
-              <div className="flex flex-col">
-                <span className="text-base font-semibold text-gray-900 line-clamp-1">
-                  {item.requester?.name ?? "Unknown user"}
-                </span>
+          return (
+            <div
+              key={item.id}
+              className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
+            >
+              {/* Avatar */}
+              <div className='relative shrink-0'>
+                <Image
+                  src={item.requester?.image ?? ""}
+                  alt={item.requester?.name ?? "Unknown user"}
+                  width={200}
+                  height={200}
+                  className="w-12 h-12 rounded-full object-cover border"
+                />
 
-                <span className="text-sm text-gray-500 line-clamp-">
-                  {item.requester?.email}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <Button
-                  onClick={() => mutationAcceptRequest.mutate(item.id)}
-                  disabled={mutationAcceptRequest.isPending}
-                  className={cn(
-                    "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
-                    item.status === "PENDING" && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
-                  )}
-                >
-                  {item.status === "PENDING" ? "Accept Request" : "Unfriend"}
-                </Button>
-
-                {item.status === "PENDING" && (
-                  <Button
-                    onClick={() => mutationDeclineRequest.mutate(item.id)}
-                    disabled={mutationDeclineRequest.isPending}
-                    className={cn(
-                      "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium bg-red-500 hover:bg-red-600 transition-all",
-                    )}
-                  >
-                    Declined
-                  </Button>
+                {isOnline && (
+                  <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
                 )}
               </div>
+
+              <div className="flex flex-col flex-1">
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold text-gray-900 line-clamp-1">
+                    {item.requester?.name ?? "Unknown user"}
+                  </span>
+
+                  <span className="text-sm text-gray-500 line-clamp-">
+                    {item.requester?.email}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Button
+                    onClick={() => mutationAcceptRequest.mutate(item.id)}
+                    disabled={mutationAcceptRequest.isPending}
+                    className={cn(
+                      "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
+                      item.status === "PENDING" && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
+                    )}
+                  >
+                    {item.status === "PENDING" ? "Accept Request" : "Unfriend"}
+                  </Button>
+
+                  {item.status === "PENDING" && (
+                    <Button
+                      onClick={() => mutationDeclineRequest.mutate(item.id)}
+                      disabled={mutationDeclineRequest.isPending}
+                      className={cn(
+                        "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium bg-red-500 hover:bg-red-600 transition-all",
+                      )}
+                    >
+                      Declined
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </TabsContent>
   )
