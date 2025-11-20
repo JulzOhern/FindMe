@@ -17,5 +17,5 @@ export const useSideBarStore = create<SideBarState>((set) => ({
 
 export const useTrackFriendsStore = create<TrackFriends>((set) => ({
   userId: '',
-  setUserId: (userId: string) => set({ userId }),
+  setUserId: (userId: string) => set((state) => ({ userId: userId === state.userId ? "" : userId })),
 }))

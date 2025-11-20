@@ -37,6 +37,7 @@ export function FriendTab({ me }: FriendType) {
   const [search, setSearch] = useState("")
   const [debounceSearch, setDebounceSearch] = useState("")
   const setUserIdToTrack = useTrackFriendsStore(s => s.setUserId)
+  const userIdToTrack = useTrackFriendsStore(s => s.userId)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -183,12 +184,11 @@ export function FriendTab({ me }: FriendType) {
                     disabled={hasLatAndLng ? false : true}
                     variant="default"
                     className={cn(
-                      "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all",
-                      "bg-blue-600 hover:bg-blue-700 text-white shadow-sm",
-                      "active:scale-95"
+                      "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95",
+                      myFriend?.id === userIdToTrack && "bg-yellow-400 hover:bg-yellow-500"
                     )}
                   >
-                    Track
+                    {myFriend?.id === userIdToTrack ? "Tracking" : "Track"}
                   </Button>
                 </div>
               </div>
