@@ -7,9 +7,17 @@ type RoutingMachineProps = {
   waypoints: PositionType[];
   myIcon: L.Icon<L.IconOptions>
   friendIcon: L.Icon<L.IconOptions>
+  myMarkerText: string
+  friendMarkerText: string
 }
 
-export function RoutingMachine({ waypoints, myIcon, friendIcon }: RoutingMachineProps) {
+export function RoutingMachine({
+  waypoints,
+  myIcon,
+  friendIcon,
+  myMarkerText,
+  friendMarkerText
+}: RoutingMachineProps) {
   const map = useMap();
 
   useEffect(() => {
@@ -27,8 +35,8 @@ export function RoutingMachine({ waypoints, myIcon, friendIcon }: RoutingMachine
       createMarker: function (i: number, wp: any) {
         const marker = L.marker(wp.latLng);
         marker.setIcon(i === 0 ? myIcon : friendIcon);
-        if (i === 0) marker.bindPopup("<b>You are here!</b>");
-        else marker.bindPopup("<b>Your friend is here!</b>");
+        if (i === 0) marker.bindPopup(myMarkerText);
+        else marker.bindPopup(friendMarkerText);
         return marker;
       }
     }).addTo(map);

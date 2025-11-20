@@ -111,6 +111,8 @@ export default function Map({ me }: MapProps) {
               waypoints={[myPosition, friendPosition.latLng]}
               myIcon={myIcon}
               friendIcon={friendIcon}
+              myMarkerText={`<b>${me?.name} (you)</b><br />You are here!`}
+              friendMarkerText={`<b>${friendPosition.name}</b> (friend)<br />Your friend is here!`}
             />
           )}
 
