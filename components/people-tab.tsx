@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useOnlineUsersContext } from '@/context/online-users';
+import { UserCheck, UserMinus, UserPlus, UserX } from 'lucide-react';
 
 async function getPeople(search: string) {
   const response = await fetch(`/api/people?search=${search}`);
@@ -188,14 +189,27 @@ function PeopleCard({ item, me }: PeopleCardProps) {
                 "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all",
                 isAddFriend && "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]",
                 isCancelRequest && "bg-neutral-500 text-white hover:bg-neutral-600 active:scale-[0.98]",
-                isAcceptRequest && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
-                isUnFriend && "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
+                isAcceptRequest && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]"
               )}
             >
-              {isAddFriend && "Add Friend"}
-              {isCancelRequest && "Cancel Request"}
-              {isAcceptRequest && "Accept Request"}
-              {isUnFriend && "Unfriend"}
+              {isAddFriend && (
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  Add Friend
+                </>
+              )}
+              {isCancelRequest && (
+                <>
+                  <UserX className="w-4 h-4" />
+                  Cancel Request
+                </>
+              )}
+              {isAcceptRequest && (
+                <>
+                  <UserCheck className="w-4 h-4" />
+                  Accept Request
+                </>
+              )}
             </Button>
           )}
 
@@ -205,6 +219,7 @@ function PeopleCard({ item, me }: PeopleCardProps) {
                 <Button
                   className="mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
                 >
+                  <UserMinus className="w-4 h-4" />
                   Unfriend
                 </Button>
               </AlertDialogTrigger>

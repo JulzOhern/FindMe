@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { acceptRequest, declineRequest } from '@/actions/friend-request';
 import { useEffect, useState } from 'react';
 import { useOnlineUsersContext } from '@/context/online-users';
+import { UserCheck, UserMinus, XCircle } from 'lucide-react';
 
 async function getFriendRequest(search: string) {
   const res = await fetch("/api/friend-request?search=" + search);
@@ -151,7 +152,17 @@ export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProp
                       item.status === "PENDING" && "bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]",
                     )}
                   >
-                    {item.status === "PENDING" ? "Accept Request" : "Unfriend"}
+                    {item.status === "PENDING" ? (
+                      <>
+                        <UserCheck className="w-4 h-4" />
+                        Accept
+                      </>
+                    ) : (
+                      <>
+                        <UserMinus className="w-4 h-4" />
+                        Unfriend
+                      </>
+                    )}
                   </Button>
 
                   {item.status === "PENDING" && (
@@ -162,6 +173,7 @@ export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProp
                         "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium bg-red-500 hover:bg-red-600 transition-all",
                       )}
                     >
+                      <XCircle className="w-4 h-4" />
                       Declined
                     </Button>
                   )}

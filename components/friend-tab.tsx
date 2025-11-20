@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useOnlineUsersContext } from "@/context/online-users";
 import { useTrackFriendsStore } from "@/lib/zustand";
+import { LocateFixed, UserMinus } from "lucide-react";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -155,6 +156,7 @@ export function FriendTab({ me }: FriendType) {
                           "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-medium transition-all"
                         )}
                       >
+                        <UserMinus className="w-4 h-4" />
                         Unfriend
                       </Button>
                     </AlertDialogTrigger>
@@ -188,6 +190,7 @@ export function FriendTab({ me }: FriendType) {
                       myFriend?.id === userIdToTrack && "bg-yellow-400 hover:bg-yellow-500"
                     )}
                   >
+                    <LocateFixed className="w-4 h-4" />
                     {myFriend?.id === userIdToTrack ? "Tracking" : "Track"}
                   </Button>
                 </div>
