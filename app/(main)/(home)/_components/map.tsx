@@ -13,6 +13,7 @@ import { pusherClient } from '@/lib/pusher';
 import { getPosition } from '@/actions/position';
 import { useOnlineUsersContext } from '@/context/online-users';
 import { useTrackFriendsStore } from '@/lib/zustand';
+import { leafletMarkerIcon } from '@/utils/leaflet-marker-icon';
 
 const DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
@@ -80,21 +81,8 @@ export default function Map({ me }: MapProps) {
     return { ...friend, latLng: { lat: friend.lat, lng: friend.lng } }
   }, [onlineUsers, userIdToTrack]);
 
-  const myIcon = L.icon({
-    iconUrl: me?.image as unknown as string,
-    iconSize: [41, 41],
-    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -40],
-    className: "rounded-full"
-  });
-
-  const friendIcon = L.icon({
-    iconUrl: friendPosition?.image as unknown as string,
-    iconSize: [41, 41],
-    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -40],
-    className: "rounded-full"
-  })
+  const myIcon = leafletMarkerIcon(me?.image);
+  const friendIcon = leafletMarkerIcon(friendPosition?.image);
 
   return (
     <>
