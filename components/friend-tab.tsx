@@ -110,6 +110,9 @@ export function FriendTab({ me }: FriendType) {
         {friends?.map((item) => {
           const myFriend = item.requester?.id === me?.id ? item.receiver : item.requester;
           const isOnline = onlineUsers.find(user => user.id === myFriend?.id);
+          const hasLatAndLng = onlineUsers.some((u) => (
+            u.id === myFriend?.id && u.lat && u.lng
+          ))
 
           return (
             <div
@@ -177,6 +180,7 @@ export function FriendTab({ me }: FriendType) {
 
                   <Button
                     onClick={() => setUserIdToTrack(myFriend?.id || "")}
+                    disabled={hasLatAndLng ? false : true}
                     variant="default"
                     className={cn(
                       "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all",
