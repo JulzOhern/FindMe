@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from 'leaflet';
-import { DefaultIcon, PositionType } from "./map";
+import { PositionType } from "./map";
 
 type RoutingMachineProps = {
   waypoints: PositionType[];
   myIcon: L.Icon<L.IconOptions>
+  friendIcon: L.Icon<L.IconOptions>
 }
 
-export function RoutingMachine({ waypoints, myIcon }: RoutingMachineProps) {
+export function RoutingMachine({ waypoints, myIcon, friendIcon }: RoutingMachineProps) {
   const map = useMap();
   const routingRef = useRef<any>(null);
 
@@ -25,13 +26,12 @@ export function RoutingMachine({ waypoints, myIcon }: RoutingMachineProps) {
         addWaypoints: false, // Prevent adding waypoints by clicking
         draggableWaypoints: false, // Prevent dragging waypoints
         collapsible: true,
-        createMarker: function (i: number, wp: any, n: number) {
-          const marker = L.marker(wp.latLng, {
-            icon: i === 0 ? myIcon : DefaultIcon // first marker = my position, second = friend
-          });
-
+        fitSelectedRoutes: false,
+        createMarker: function (i: number, wp: any) {
+          const marker = L.marker(wp.latLng);
+          marker.setIcon(i === 0 ? myIcon : friendIcon);
           if (i === 0) marker.bindPopup("<b>You are here!</b>");
-
+          else marker.bindPopup("<b>Your friend is here!</b>");
           return marker;
         }
       }).addTo(map);

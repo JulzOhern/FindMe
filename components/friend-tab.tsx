@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useOnlineUsersContext } from "@/context/online-users";
+import { useTrackFriendsStore } from "@/lib/zustand";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -35,6 +36,7 @@ export function FriendTab({ me }: FriendType) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("")
   const [debounceSearch, setDebounceSearch] = useState("")
+  const setUserIdToTrack = useTrackFriendsStore(s => s.setUserId)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -174,6 +176,7 @@ export function FriendTab({ me }: FriendType) {
                   </AlertDialog>
 
                   <Button
+                    onClick={() => setUserIdToTrack(myFriend?.id || "")}
                     variant="default"
                     className={cn(
                       "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all",

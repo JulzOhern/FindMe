@@ -6,7 +6,7 @@ import { Members } from "pusher-js";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type ContextType = {
-  onlineUsers: User[];
+  onlineUsers: (User & { lat?: number; lng?: number })[];
   setOnlineUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
@@ -18,7 +18,7 @@ type MemberType = {
 const Context = createContext({} as ContextType);
 
 export function OnlineUsersProvider({ children }: { children: React.ReactNode }) {
-  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<(User & { lat?: number; lng?: number })[]>([]);
 
   useEffect(() => {
     // Subscribe to a presence channel
