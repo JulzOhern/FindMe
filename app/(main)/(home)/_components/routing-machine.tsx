@@ -3,6 +3,8 @@ import { useMap } from "react-leaflet";
 import L from 'leaflet';
 import { PositionType } from "./map";
 
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
 type RoutingMachineProps = {
   waypoints: PositionType[];
   myIcon: L.Icon<L.IconOptions>
@@ -19,12 +21,14 @@ export function RoutingMachine({
   friendMarkerText
 }: RoutingMachineProps) {
   const map = useMap();
+  const graphHopperApiKey = process.env.NEXT_PUBLIC_GRAPH_HOPPER_API_KEY;
 
   useEffect(() => {
     if (!map) return;
 
     const routingControl = (L as any).Routing.control({
       waypoints: waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
+      router: IS_PRODUCTION ? new (L as any).Routing.GraphHopper(graphHopperApiKey) : null,
       routeWhileDragging: true,
       showAlternatives: true,
       /* lineOptions: { styles: [{ color: 'blue' }] }, */

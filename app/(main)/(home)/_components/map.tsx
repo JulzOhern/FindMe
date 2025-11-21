@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { MapContainer, Marker, Popup, ZoomControl } from 'react-leaflet'
 import 'leaflet-routing-machine';
+import 'lrm-graphhopper';
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
