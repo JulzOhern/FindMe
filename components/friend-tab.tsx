@@ -21,6 +21,7 @@ import {
 import { useOnlineUsersContext } from "@/context/online-users";
 import { useTrackFriendsStore } from "@/lib/zustand";
 import { LocateFixed, UserMinus } from "lucide-react";
+import { requestFriendPosition } from "@/actions/request-friend-position";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -112,9 +113,15 @@ export function FriendTab({ me }: FriendType) {
         {friends?.map((item) => {
           const myFriend = item.requester?.id === me?.id ? item.receiver : item.requester;
           const isOnline = onlineUsers.find(user => user.id === myFriend?.id);
-          const hasLatAndLng = onlineUsers.some((u) => (
-            u.id === myFriend?.id && u.lat && u.lng
-          ))
+
+          function handleRequestFriendPosition() {
+            if (myFriend?.id) {
+              setUserIdToTrack(myFriend.id)
+              if (!onlineUsers.some((u) => u.id === myFriend.id && u.lat && u.lng)) {
+                requestFriendPosition(myFriend.id)
+              }
+            }
+          }
 
           return (
             <div
@@ -182,8 +189,8 @@ export function FriendTab({ me }: FriendType) {
                   </AlertDialog>
 
                   <Button
-                    onClick={() => setUserIdToTrack(myFriend?.id || "")}
-                    disabled={hasLatAndLng ? false : true}
+                    onClick={handleRequestFriendPosition}
+                    disabled={isOnline ? false : true}
                     variant="default"
                     className={cn(
                       "mt-3 w-fit px-4 py-1.5 text-sm rounded-lg font-semibold transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95",

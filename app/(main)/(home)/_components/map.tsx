@@ -70,6 +70,20 @@ export default function Map({ me }: MapProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`private-friend-request-${me?.id}`);
+
+    channel.bind("position-request", (data: any) => {
+      const myPosition = onlineUsers.find(u => u.id === data.userId);
+      getPosition(myPosition?.lat || 0, myPosition?.lng || 0);
+    })
+
+    return () => {
+      channel.unbind("position-request")
+      pusherClient.unsubscribe(`private-friend-request-${me?.id}`)
+    }
+  }, [onlineUsers])
+
   const myPosition = useMemo(() => {
     const myPosition = onlineUsers.find(u => u.id === me?.id);
     if (!myPosition?.lat || !myPosition.lng) return null
