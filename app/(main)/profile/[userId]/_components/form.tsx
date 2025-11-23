@@ -9,6 +9,17 @@ import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+
 type FormProps = {
   me: User | null
 }
@@ -54,17 +65,57 @@ export function Form({ me }: FormProps) {
         </div>
 
         {/* Email (Read Only) */}
-        <div className="flex flex-col space-y-1.5">
-          <Label>Email</Label>
-          <Input
-            defaultValue={me?.email || ""}
-            readOnly
-            className="rounded-lg bg-muted cursor-not-allowed"
-          />
-          <p className="text-xs text-muted-foreground">
-            Email is locked because you signed in using Google.
-          </p>
+        <div className="space-y-3">
+          <h3 className="font-semibold text-gray-700">Email Addresses</h3>
+
+          {/* Email Item */}
+          <div className="flex items-center space-x-2">
+            <span>{me?.email}</span>
+            <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">Primary</span>
+            <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full">Google</span>
+          </div>
+
+          {/* Add Email */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="text-red-600 text-sm font-medium hover:underline mt-2"
+              >
+                + Add Email Address
+              </button>
+            </DialogTrigger>
+
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Email Address</DialogTitle>
+                <DialogDescription>
+                  Enter the email address you want to add to your account.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" name="email" placeholder="example@example.com" />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  className='bg-blue-600 hover:bg-blue-700'
+                  type="submit"
+                >
+                  Save changes
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
+
 
         {/* Save Changes and Logout Buttons */}
         <div className="flex flex-col gap-3 pt-2">
