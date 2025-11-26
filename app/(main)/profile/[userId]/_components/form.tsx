@@ -8,23 +8,33 @@ import { ArrowLeft } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import * as z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { changeName } from '@/actions/profile'
+import { toast } from 'sonner'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+const profileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+})
 
 type FormProps = {
   me: User | null
 }
 
 export function Form({ me }: FormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<z.infer<typeof profileSchema>>({ resolver: zodResolver(profileSchema) });
+
+  async function onSubmit(data: z.infer<typeof profileSchema>) {
+    await changeName(data.name)
+      .then(() => toast.success("Name updated!"))
+      .catch(() => toast.error("Error updating name"));
+  }
+
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
       {/* Back Button */}
@@ -53,7 +63,10 @@ export function Form({ me }: FormProps) {
       </div>
 
       {/* Form */}
-      <form className="mt-10 space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-10 space-y-6"
+      >
         {/* Name */}
         <div className="flex flex-col space-y-1.5">
           <Label>Name</Label>
@@ -61,7 +74,9 @@ export function Form({ me }: FormProps) {
             defaultValue={me?.name || ""}
             placeholder="Enter your name"
             className="rounded-lg"
+            {...register("name")}
           />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -75,13 +90,10 @@ export function Form({ me }: FormProps) {
             </span>
           </div>
 
-
           <p className="text-gray-500 text-sm">
             This is the primary email associated with your account.
           </p>
         </div>
-
-
 
         {/* Save Changes and Logout Buttons */}
         <div className="flex flex-col gap-3 pt-2">
