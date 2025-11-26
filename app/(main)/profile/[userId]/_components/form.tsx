@@ -64,57 +64,23 @@ export function Form({ me }: FormProps) {
           />
         </div>
 
-        {/* Email (Read Only) */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-gray-700">Email Addresses</h3>
+        <div className="space-y-2">
+          <Label className="text-gray-700 font-semibold">Email Address</Label>
 
-          {/* Email Item */}
-          <div className="flex items-center space-x-2">
-            <span>{me?.email}</span>
-            <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">Primary</span>
-            <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full">Google</span>
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-2">
+            <span className="text-gray-800 font-medium">{me?.email || "No email found"}</span>
+
+            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">
+              Verified
+            </span>
           </div>
 
-          {/* Add Email */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="text-red-600 text-sm font-medium hover:underline mt-2"
-              >
-                + Add Email Address
-              </button>
-            </DialogTrigger>
 
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Email Address</DialogTitle>
-                <DialogDescription>
-                  Enter the email address you want to add to your account.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="grid gap-4">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" placeholder="example@example.com" />
-                </div>
-              </div>
-
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button
-                  className='bg-blue-600 hover:bg-blue-700'
-                  type="submit"
-                >
-                  Save changes
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <p className="text-gray-500 text-sm">
+            This is the primary email associated with your account.
+          </p>
         </div>
+
 
 
         {/* Save Changes and Logout Buttons */}
