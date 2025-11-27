@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 import { acceptRequest, declineRequest } from '@/actions/friend-request';
 import { useEffect, useState } from 'react';
 import { useOnlineUsersContext } from '@/context/online-users';
-import { UserCheck, UserMinus, XCircle } from 'lucide-react';
+import { UserCheck, UserMinus, UserPlus, XCircle } from 'lucide-react';
+import { formatSmartDate } from '@/utils/format-date';
 
 async function getFriendRequest(search: string) {
   const res = await fetch("/api/friend-request?search=" + search);
@@ -141,6 +142,11 @@ export function FriendRequestTab({ getFriendRequestCount }: FriendRequestTabProp
                   <span className="text-sm text-gray-500 line-clamp-">
                     {item.requester?.email}
                   </span>
+                </div>
+
+                <div className="inline-flex items-center gap-1 mt-2 text-xs px-3 py-1 rounded-full bg-green-500/20 border border-green-500/20 text-primary w-fit">
+                  <UserPlus className="w-3 h-3" />
+                  <span>{formatSmartDate(new Date(item.createdAt))}</span>
                 </div>
 
                 <div className="flex items-center gap-1">

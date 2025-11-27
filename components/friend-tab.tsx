@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useOnlineUsersContext } from "@/context/online-users";
 import { useTrackFriendsStore } from "@/lib/zustand";
-import { LocateFixed, UserMinus } from "lucide-react";
+import { HeartHandshake, LocateFixed, UserMinus } from "lucide-react";
 import { requestFriendPosition } from "@/actions/request-friend-position";
+import { formatSmartDate } from "@/utils/format-date";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -152,6 +153,11 @@ export function FriendTab({ me }: FriendType) {
                   <span className="text-sm text-gray-500 line-clamp-">
                     {myFriend?.email}
                   </span>
+                </div>
+
+                <div className="inline-flex items-center gap-1 mt-2 text-xs px-3 py-1 rounded-full bg-green-500/20 border border-green-500/20 text-primary w-fit">
+                  <HeartHandshake className="w-3 h-3" />
+                  {formatSmartDate(new Date(item.createdAt))}
                 </div>
 
                 <div className="flex items-center gap-1">
