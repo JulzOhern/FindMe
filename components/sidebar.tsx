@@ -36,7 +36,7 @@ export function Sidebar({ me }: SidebarProps) {
     <Sheet open={isOpen} onOpenChange={toggle}>
       <SheetContent
         side="left"
-        className="flex flex-col gap-0 border-r bg-white sm:w-3/4 w-full shadow-sm z-1001">
+        className="flex flex-col gap-0 border-r bg-white sm:w-3/4 sm:max-w-md w-full shadow-sm z-1001">
         {/* Header */}
         <SheetHeader className="pb-2 border-b">
           <SheetTitle className="text-xl font-semibold tracking-tight">

@@ -116,7 +116,7 @@ export default function Map({ me }: MapProps) {
               icon={myIcon}
             >
               <Popup>
-                <b>You are here!</b>
+                <b>{me?.name} (you)</b><br />You are here!
               </Popup>
             </Marker>
           )}
