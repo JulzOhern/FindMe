@@ -4,6 +4,7 @@ import { User } from "@/generated/prisma/client";
 import { pusherClient } from "@/lib/pusher";
 import { Members } from "pusher-js";
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type ContextType = {
   onlineUsers: (User & { lat?: number; lng?: number })[];
@@ -38,6 +39,9 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     });
 
     channel.bind("pusher:member_removed", (member: MemberType) => {
+      toast.info("User left", {
+        description: `${member.info.name} left`,
+      });
       setOnlineUsers((prev) => prev.filter((u) => u.id !== member.id));
     });
 
