@@ -11,8 +11,9 @@ import Link from 'next/link'
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
-import { changeName } from '@/actions/profile'
+import { changeName, changeProfile } from '@/actions/profile'
 import { toast } from 'sonner'
+import { UploadButton } from '@/utils/uploadthing'
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -47,19 +48,51 @@ export function Form({ me }: FormProps) {
       </Link>
 
       {/* Profile Image */}
-      <div className="flex flex-col items-center mt-6">
-        <Image
-          src={me?.image || ""}
-          alt={me?.name || "Profile picture"}
-          width={120}
-          height={120}
-          className="w-28 h-28 rounded-full object-cover border shadow-sm"
-        />
+      <div className="flex flex-col items-center mt-8 space-y-4">
+        {/* Avatar Container */}
+        <div className='shrink-0'>
+          <Image
+            src={me?.image || ""}
+            alt={me?.name || "Profile picture"}
+            width={450}
+            height={550}
+            className="w-36 h-36 rounded-full object-cover border shadow-md transition-all group-hover:shadow-lg group-hover:scale-105"
+          />
+        </div>
 
-        <h1 className="mt-4 text-2xl font-semibold">Edit Profile</h1>
-        <p className="text-sm text-muted-foreground">
-          Update your account details
-        </p>
+        {/* Title */}
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight">Edit Profile</h1>
+          <p className="text-sm text-muted-foreground">
+            Update your account details
+          </p>
+        </div>
+
+        {/* Upload Button */}
+        <div className="mt-2">
+          <UploadButton
+            endpoint="imageUploader"
+            appearance={{
+              button: "bg-primary text-white text-sm px-4 py-2 rounded-lg shadow transition hover:bg-primary/90",
+              container: "flex justify-center",
+            }}
+            onClientUploadComplete={(res) => {
+              // console.log("Files: ", res);
+              changeProfile(res)
+                .then(() => {
+                  toast.success("Profile picture updated!", {
+                    description: "Your profile picture has been updated."
+                  })
+                })
+                .catch(() => toast.error("Error updating profile picture"));
+            }}
+            onUploadError={(error: Error) => {
+              toast.error("Error uploading profile", {
+                description: error.message
+              });
+            }}
+          />
+        </div>
       </div>
 
       {/* Form */}

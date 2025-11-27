@@ -46,9 +46,9 @@ export function Header({ me }: FloatingElementsProps) {
           <Image
             src={me?.image || "/default-avatar.png"}
             alt={me?.name || "Avatar"}
-            width={36}
-            height={36}
-            className="rounded-full"
+            width={70}
+            height={90}
+            className="h-9 w-9 rounded-full object-cover"
           />
         </Link>
       </div>
