@@ -1,5 +1,6 @@
 "use client";
 
+import { getPosition } from "@/actions/position";
 import { User } from "@/generated/prisma/client";
 import { pusherClient } from "@/lib/pusher";
 import { Members } from "pusher-js";
@@ -48,6 +49,41 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     return () => {
       pusherClient.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser')
+      return
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords
+        getPosition(latitude, longitude)
+      },
+      (err) => console.error(err),
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 5000 }
+    )
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
+
+  useEffect(() => {
+    const channel = pusherClient.subscribe("position-update")
+
+    channel.bind("position", (data: any) => {
+      setOnlineUsers(prev =>
+        prev.map(u => u.id === data.userId ? { ...u, lat: data.lat, lng: data.lng } : u)
+      );
+    })
+
+    return () => {
+      channel.unbind("position")
+      pusherClient.unsubscribe("position-update")
+    }
   }, []);
 
   return (

@@ -2,6 +2,7 @@
 
 import { getMe } from "@/GET/me";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function addFriend(receiverId: string) {
   const me = await getMe();
@@ -31,6 +32,7 @@ export async function addFriend(receiverId: string) {
     })
   };
 
+  revalidatePath(`/user/${receiverId}`);
   return data;
 }
 
@@ -47,6 +49,7 @@ export async function cancelRequest(receiverId: string) {
     }
   })
 
+  revalidatePath(`/user/${receiverId}`);
   return data;
 }
 
@@ -66,6 +69,7 @@ export async function acceptRequest(receiverId: string) {
     }
   })
 
+  revalidatePath(`/user/${receiverId}`);
   return data;
 }
 
@@ -90,6 +94,7 @@ export async function unFriend(receiverId: string) {
     }
   })
 
+  revalidatePath(`/user/${receiverId}`);
   return data;
 }
 
@@ -106,5 +111,6 @@ export async function declineRequest(requesterId: string) {
     }
   })
 
+  revalidatePath(`/user/${requesterId}`);
   return data;
 }

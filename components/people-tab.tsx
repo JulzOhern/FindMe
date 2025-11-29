@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useOnlineUsersContext } from '@/context/online-users';
 import { UserCheck, UserMinus, UserPlus, UserX } from 'lucide-react';
+import Link from 'next/link';
 
 async function getPeople(search: string) {
   const response = await fetch(`/api/people?search=${search}`);
@@ -154,19 +155,21 @@ function PeopleCard({ item, me }: PeopleCardProps) {
   return (
     <div className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm">
       {/* Avatar */}
-      <div className='relative shrink-0'>
-        <Image
-          src={item.image ?? ""}
-          alt={item.name ?? "Unknown user"}
-          width={200}
-          height={200}
-          className="w-12 h-12 rounded-full object-cover border"
-        />
+      <Link href={`/user/${item.id}`}>
+        <div className='relative shrink-0'>
+          <Image
+            src={item.image ?? ""}
+            alt={item.name ?? "Unknown user"}
+            width={200}
+            height={200}
+            className="w-12 h-12 rounded-full object-cover border"
+          />
 
-        {isOnline && (
-          <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
-        )}
-      </div>
+          {isOnline && (
+            <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
+          )}
+        </div>
+      </Link>
 
       {/* Right content */}
       <div className="flex flex-col flex-1">

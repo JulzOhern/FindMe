@@ -23,6 +23,7 @@ import { useTrackFriendsStore } from "@/lib/zustand";
 import { HeartHandshake, LocateFixed, UserMinus } from "lucide-react";
 import { requestFriendPosition } from "@/actions/request-friend-position";
 import { formatSmartDate } from "@/utils/format-date";
+import Link from "next/link";
 
 export async function getFriend(debounceSearch: string) {
   const res = await fetch("/api/friend?search=" + debounceSearch);
@@ -130,19 +131,21 @@ export function FriendTab({ me }: FriendType) {
               className="flex items-start gap-4 p-3 rounded-xl border bg-white shadow-sm"
             >
               {/* Avatar */}
-              <div className="relative shrink-0">
-                <Image
-                  src={myFriend?.image ?? ""}
-                  alt={myFriend?.name ?? "Unknown user"}
-                  width={200}
-                  height={200}
-                  className="w-12 h-12 rounded-full object-cover border"
-                />
+              <Link href={`/user/${myFriend?.id}`}>
+                <div className="relative shrink-0">
+                  <Image
+                    src={myFriend?.image ?? ""}
+                    alt={myFriend?.name ?? "Unknown user"}
+                    width={200}
+                    height={200}
+                    className="w-12 h-12 rounded-full object-cover border"
+                  />
 
-                {isOnline && (
-                  <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
-                )}
-              </div>
+                  {isOnline && (
+                    <span className="absolute -right-0.5 bottom-1 h-3 w-3 rounded-full bg-green-500 border-2 border-white shadow" />
+                  )}
+                </div>
+              </Link>
 
               <div className="flex flex-col flex-1">
                 <div className="flex flex-col">
