@@ -12,13 +12,16 @@ export function LocateControl() {
       flyTo: true,
       initialZoomLevel: 15,
       drawCircle: false,
-      drawMarker: false
+      drawMarker: false,
+      locateOptions: {
+        enableHighAccuracy: true
+      }
     }).addTo(map);
 
     return () => {
       map.removeControl(lc);
     }
-  }, []);
+  }, [map]);
 
   return null
 }

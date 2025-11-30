@@ -61,7 +61,7 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
         getPosition(latitude, longitude)
       },
       (err) => console.error(err),
-      { enableHighAccuracy: false, timeout: 20000, maximumAge: 5000 }
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 }
     )
 
     return () => {
