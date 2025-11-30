@@ -14,6 +14,7 @@ import { getPosition } from '@/actions/position';
 import { useOnlineUsersContext } from '@/context/online-users';
 import { useTrackFriendsStore } from '@/lib/zustand';
 import { leafletMarkerIcon } from '@/utils/leaflet-marker-icon';
+import { LocateControl } from './locate-control';
 
 const DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
@@ -96,6 +97,7 @@ export default function Map({ me }: MapProps) {
           )}
 
           <ZoomControl position='bottomleft' />
+          <LocateControl />
           <LayersControlSection />
         </MapContainer>
       )}
