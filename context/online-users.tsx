@@ -22,6 +22,7 @@ const Context = createContext({} as ContextType);
 export function OnlineUsersProvider({ children }: { children: React.ReactNode }) {
   const [onlineUsers, setOnlineUsers] = useState<(User & { lat?: number; lng?: number })[]>([]);
 
+  // use this to get the online users in realtime
   useEffect(() => {
     // Subscribe to a presence channel
     const channel = pusherClient.subscribe("presence-online-users");

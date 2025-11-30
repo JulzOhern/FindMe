@@ -15,6 +15,19 @@ import {
 import Link from "next/link";
 import { UnFriendButton } from "./_components/unfriend-btn";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ userId: string }>;
+}) {
+  const { userId } = await params;
+  const user = await getUser(userId);
+
+  return {
+    title: user?.name,
+  }
+}
+
 export default async function UserPage({
   params,
 }: {
