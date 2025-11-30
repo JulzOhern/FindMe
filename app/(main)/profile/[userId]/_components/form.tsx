@@ -118,9 +118,16 @@ export function Form({ me }: FormProps) {
           <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-2">
             <span className="text-gray-800 font-medium">{me?.email || "No email found"}</span>
 
-            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">
-              Verified
-            </span>
+            {!me?.emailVerified && (
+              <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
+                Not Verified
+              </span>
+            )}
+            {me?.emailVerified && (
+              <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">
+                Verified
+              </span>
+            )}
           </div>
 
           <p className="text-gray-500 text-sm">
