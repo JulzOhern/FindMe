@@ -40,9 +40,6 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     });
 
     channel.bind("pusher:member_removed", (member: MemberType) => {
-      toast.info("User left", {
-        description: `${member.info.name} left`,
-      });
       setOnlineUsers((prev) => prev.filter((u) => u.id !== member.id));
     });
 
@@ -51,6 +48,7 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     };
   }, []);
 
+  // Get current position
   useEffect(() => {
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser')
@@ -71,6 +69,7 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     }
   }, [])
 
+  // Listen for realtime position updates
   useEffect(() => {
     const channel = pusherClient.subscribe("position-update")
 
