@@ -21,14 +21,13 @@ export function RoutingMachine({
   friendMarkerText
 }: RoutingMachineProps) {
   const map = useMap();
-  const graphHopperApiKey = process.env.NEXT_PUBLIC_GRAPH_HOPPER_API_KEY;
 
   useEffect(() => {
     if (!map) return;
 
     const routingControl = (L as any).Routing.control({
       waypoints: waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
-      router: IS_PRODUCTION ? new (L as any).Routing.GraphHopper(graphHopperApiKey) : null,
+      router: IS_PRODUCTION ? new (L as any).Routing.GraphHopper(process.env.NEXT_PUBLIC_GRAPH_HOPPER_API_KEY) : null,
       routeWhileDragging: true,
       showAlternatives: true,
       /* lineOptions: { styles: [{ color: 'blue' }] }, */
@@ -50,7 +49,7 @@ export function RoutingMachine({
         map.removeControl(routingControl);
       }
     }
-  }, [map, waypoints]);
+  }, [map, waypoints, friendIcon, friendMarkerText, myIcon, myMarkerText]);
 
   return null;
 }

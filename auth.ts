@@ -8,7 +8,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
   ...authConfig,
   callbacks: {
-    async signIn({ user, email, profile, account }) {
+    async signIn({ user, account }) {
 
       if (account?.provider === "google" && user?.email && user?.id) {
         // Check if user already exists using email

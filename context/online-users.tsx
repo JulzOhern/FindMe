@@ -74,7 +74,7 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const channel = pusherClient.subscribe("position-update")
 
-    channel.bind("position", (data: any) => {
+    channel.bind("position", (data: { userId: string, lat: number, lng: number }) => {
       setOnlineUsers(prev =>
         prev.map(u => u.id === data.userId ? { ...u, lat: data.lat, lng: data.lng } : u)
       );

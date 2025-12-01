@@ -3,22 +3,10 @@
 import { Button } from '@/components/ui/button'
 import { Friend, User } from '@/generated/prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { UserCheck, UserMinus, UserPlus, UserPlus2, UserX } from 'lucide-react'
+import { UserCheck, UserPlus, UserPlus2, UserX } from 'lucide-react'
+import { cn } from '@/lib/utils';
 
 import { acceptRequest, addFriend, cancelRequest, declineRequest } from '@/actions/people';
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { cn } from '@/lib/utils';
 
 type NotFriendFallbackProps = {
   user: (User & { receivedFriends: Friend[], requestedFriends: Friend[] }) | null
@@ -72,7 +60,7 @@ export function NotFriendFallback({ user, me }: NotFriendFallbackProps) {
         <UserPlus2 />
       </div>
 
-      <h2 className="text-xl font-semibold mt-6">You're not friends yet</h2>
+      <h2 className="text-xl font-semibold mt-6">You&apos;re not friends yet</h2>
 
       <p className="text-muted-foreground max-w-sm mt-2">
         Add this user as your friend to view their live location and interact with them.

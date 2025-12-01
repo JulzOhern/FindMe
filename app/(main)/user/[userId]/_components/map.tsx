@@ -29,16 +29,16 @@ export default function Map({ user, me }: MapProps) {
   useEffect(() => {
     const channel = pusherClient.subscribe(`private-friend-request-${me?.id}`);
 
-    channel.bind("position-request", (data: any) => {
+    channel.bind("position-request", (data: { userId: string }) => {
       const myPosition = onlineUsers.find(u => u.id === data.userId);
       getPosition(myPosition?.lat || 0, myPosition?.lng || 0);
     })
 
     return () => {
       channel.unbind("position-request")
-      pusherClient.unsubscribe(`private-friend-request-${user?.id}`)
+      pusherClient.unsubscribe(`private-friend-request-${me?.id}`)
     }
-  }, [onlineUsers])
+  }, [onlineUsers, me?.id])
 
   const userPosition = useMemo(() => {
     const myPosition = onlineUsers.find(u => u.id === user?.id);
@@ -58,7 +58,7 @@ export default function Map({ user, me }: MapProps) {
         <h2 className="text-xl font-semibold mt-6">This user is currently offline</h2>
 
         <p className="text-muted-foreground mt-2 max-w-sm">
-          Their live location can't be shown at the moment.
+          Their live location can&apos;t be shown at the moment.
           You can view their location in the map once they are online.
         </p>
 

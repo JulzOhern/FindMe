@@ -12,7 +12,7 @@ export function LocateControl() {
       flyTo: true,
       initialZoomLevel: 15,
       drawCircle: false,
-      drawMarker: false,
+      drawMarker: true,
       locateOptions: {
         enableHighAccuracy: true
       }

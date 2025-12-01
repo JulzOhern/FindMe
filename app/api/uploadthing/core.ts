@@ -6,7 +6,7 @@ import { UTApi } from 'uploadthing/server'
 export const utapi = new UTApi({});
 const f = createUploadthing();
 
-const auth = async (req: Request) => {
+const auth = async (/* req: Request */) => {
   const me = await getMe();
   return me;
 };
@@ -25,9 +25,9 @@ export const ourFileRouter = {
     },
   })
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
+    .middleware(async (/* { req } */) => {
       // This code runs on your server before upload
-      const user = await auth(req);
+      const user = await auth(/* req */);
 
       // If you throw, the user will not be able to upload
       if (!user) throw new UploadThingError("Unauthorized");

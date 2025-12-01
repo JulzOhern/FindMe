@@ -38,7 +38,7 @@ export default function Map({ me }: MapProps) {
   useEffect(() => {
     const channel = pusherClient.subscribe(`private-friend-request-${me?.id}`);
 
-    channel.bind("position-request", (data: any) => {
+    channel.bind("position-request", (data: { userId: string }) => {
       const myPosition = onlineUsers.find(u => u.id === data.userId);
       getPosition(myPosition?.lat || 0, myPosition?.lng || 0);
     })
@@ -47,7 +47,7 @@ export default function Map({ me }: MapProps) {
       channel.unbind("position-request")
       pusherClient.unsubscribe(`private-friend-request-${me?.id}`)
     }
-  }, [onlineUsers])
+  }, [onlineUsers, me?.id])
 
   const myPosition = useMemo(() => {
     const myPosition = onlineUsers.find(u => u.id === me?.id);
