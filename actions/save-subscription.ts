@@ -9,14 +9,13 @@ export async function saveSubscription(subscription: string) {
   const me = await getMe();
 
   if (!me) throw new Error("Not authenticated");
-  if (me.webPushSubscription) return;
 
   await prisma.user.update({
     where: {
       id: me.id
     },
     data: {
-      webPushSubscription: JSON.stringify(subscription)
+      webPushSubscription: JSON.parse(subscription)
     }
   })
 

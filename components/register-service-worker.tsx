@@ -32,9 +32,12 @@ export function RegisterServiceWorker() {
             ),
           });
 
-          /* console.log("subscription", subscription) */
+          /* console.log({
+            p256dh: subscription.getKey("p256dh"),
+            auth: subscription.getKey("auth")
+          }); */
 
-          // Send subscription object to your server
+          // save web push subscription to user model in database
           await saveSubscription(JSON.stringify(subscription));
 
           console.log("Subscribed for push notifications:", subscription);

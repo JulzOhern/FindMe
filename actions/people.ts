@@ -1,8 +1,12 @@
 "use server";
 
 import { getMe } from "@/GET/me";
+import { initWebPush } from "@/lib/initialize-webpush";
 import { prisma } from "@/lib/prisma";
+import { sendNotification } from "@/utils/send-notification";
 import { revalidatePath } from "next/cache";
+
+initWebPush();
 
 export async function addFriend(receiverId: string) {
   const me = await getMe();
@@ -30,6 +34,16 @@ export async function addFriend(receiverId: string) {
         receiverId: receiverId
       }
     })
+  };
+
+  if (me?.webPushSubscription) {
+    const receiver = await prisma.user.findUnique({ where: { id: receiverId } })
+    if (!receiver) return
+
+    const title = "Friend request";
+    const body = `${receiver?.name} wants to be your friend`;
+    const subscription = receiver.webPushSubscription as string;
+    await sendNotification(title, body, subscription);
   };
 
   revalidatePath(`/user/${receiverId}`);
