@@ -25,6 +25,9 @@ model User {
   requestedFriends Friend[]  @relation("requestedFriends")
   receivedFriends  Friend[]  @relation("receivedFriends")
 
+  notifSender   Notification[] @relation("notifSender")
+  notifReceiver Notification[] @relation("notifReceiver")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -61,4 +64,17 @@ model Friend {
 
   requester User @relation("requestedFriends", fields: [requesterId], references: [id], onDelete: Cascade)
   receiver  User @relation("receivedFriends", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String   @db.ObjectId
+  receiverId String   @db.ObjectId
+  title      String
+  body       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sender   User @relation("notifSender", fields: [senderId], references: [id])
+  receiver User @relation("notifReceiver", fields: [receiverId], references: [id])
 }

@@ -14,18 +14,31 @@ export async function addFriend(receiverId: string) {
   if (!me) throw new Error("Not authenticated");
   const requesterId = me.id;
 
-  const data = await prisma.friend.findFirst({
-    where: {
-      AND: [
-        {
-          requesterId: requesterId
-        },
-        {
-          receiverId: receiverId
-        }
-      ]
-    }
-  });
+  const data = await prisma.$transaction(async (tx) => {
+    const updatedFriend = await tx.friend.findFirst({
+      where: {
+        AND: [
+          {
+            requesterId: requesterId
+          },
+          {
+            receiverId: receiverId
+          }
+        ]
+      }
+    });
+
+    await tx.notification.create({
+      data: {
+        senderId: requesterId,
+        receiverId: receiverId,
+        title: "Friend Request",
+        body: `${me.name} wants to be your friend`
+      }
+    })
+
+    return updatedFriend
+  })
 
   if (!data) {
     await prisma.friend.create({
@@ -36,15 +49,13 @@ export async function addFriend(receiverId: string) {
     })
   };
 
-  if (me?.webPushSubscription) {
-    const receiver = await prisma.user.findUnique({ where: { id: receiverId } })
-    if (!receiver) return
-
+  const receiver = await prisma.user.findUnique({ where: { id: receiverId } })
+  if (receiver) {
     const title = "Friend request";
-    const body = `${receiver?.name} wants to be your friend`;
+    const body = `${me?.name} wants to be your friend`;
     const subscription = receiver.webPushSubscription as string;
     await sendNotification(title, body, subscription);
-  };
+  }
 
   revalidatePath(`/user/${receiverId}`);
   return data;
@@ -56,12 +67,24 @@ export async function cancelRequest(receiverId: string) {
   if (!me) throw new Error("Not authenticated");
   const requesterId = me.id;
 
-  const data = await prisma.friend.deleteMany({
-    where: {
-      requesterId: requesterId,
-      receiverId: receiverId
-    }
+  const data = await prisma.$transaction(async (tx) => {
+    const deletedFriend = await tx.friend.deleteMany({
+      where: {
+        requesterId,
+        receiverId
+      }
+    })
+
+    await tx.notification.deleteMany({
+      where: {
+        senderId: requesterId,
+        receiverId
+      }
+    })
+
+    return deletedFriend
   })
+
 
   revalidatePath(`/user/${receiverId}`);
   return data;
@@ -73,15 +96,36 @@ export async function acceptRequest(receiverId: string) {
   if (!me) throw new Error("Not authenticated");
   const requesterId = me.id;
 
-  const data = await prisma.friend.updateMany({
-    where: {
-      requesterId: receiverId,
-      receiverId: requesterId
-    },
-    data: {
-      status: "ACCEPTED"
-    }
+  const data = await prisma.$transaction(async (tx) => {
+    const acceptedFriend = await tx.friend.updateMany({
+      where: {
+        requesterId: receiverId,
+        receiverId: requesterId
+      },
+      data: {
+        status: "ACCEPTED"
+      }
+    })
+
+    await tx.notification.create({
+      data: {
+        senderId: requesterId,
+        receiverId,
+        title: "Friend Request Accepted",
+        body: `${me.name} accepted your friend request`
+      }
+    })
+
+    return acceptedFriend
   })
+
+  const receiver = await prisma.user.findUnique({ where: { id: receiverId } })
+  if (receiver) {
+    const title = "Friend request";
+    const body = `${me?.name} wants to be your friend`;
+    const subscription = receiver.webPushSubscription as string;
+    await sendNotification(title, body, subscription);
+  }
 
   revalidatePath(`/user/${receiverId}`);
   return data;
