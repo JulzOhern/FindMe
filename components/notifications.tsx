@@ -17,6 +17,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Notification, User } from "@/generated/prisma/client";
 import { formatDistanceToNow } from "date-fns";
+import { useTransition } from "react";
+import { deleteNotification, undoDeleteNotification } from "@/actions/delete-notification";
+import { toast } from "sonner";
 
 type NotificationsProps = {
   notifications: (Notification & { sender: User | null })[] | null;
@@ -24,6 +27,21 @@ type NotificationsProps = {
 
 export function Notifications({ notifications }: NotificationsProps) {
   const count = notifications?.length || 0;
+  const [isPending, setTransition] = useTransition();
+
+  function handleDeleteNotification(notificationId: string) {
+    setTransition(async () => {
+      await deleteNotification(notificationId)
+        .then((data) => toast.success("Deleted", {
+          description: "Notification deleted!",
+          action: {
+            label: "Undo",
+            onClick: () => undoDeleteNotification(data)
+          }
+        }))
+        .catch(() => toast.error("Something went wrong"));
+    })
+  }
 
   return (
     <Popover>
@@ -115,7 +133,8 @@ export function Notifications({ notifications }: NotificationsProps) {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                      onClick={() => console.log("Delete:", n.id)}
+                      onClick={() => handleDeleteNotification(n.id)}
+                      disabled={isPending}
                       className="text-red-600"
                     >
                       Delete

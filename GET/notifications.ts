@@ -11,6 +11,9 @@ export async function getNotifications() {
     },
     include: {
       sender: true
+    },
+    orderBy: {
+      createdAt: "asc"
     }
   })
 
