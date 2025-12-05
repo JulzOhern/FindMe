@@ -10,7 +10,7 @@ import {
 import { useSideBarStore } from "@/lib/zustand"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PeopleTab } from "./people-tab"
-import { User } from "@/generated/prisma/client"
+import { User } from "@/app/generated/prisma/client";
 import { FriendRequestTab } from "./friend-request-tab"
 import { FriendTab } from "./friend-tab"
 import { useCallback, useState } from "react"

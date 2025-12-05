@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TabsContent } from "./ui/tabs";
-import { Friend, User } from "@/generated/prisma/client";
+import { Friend, User } from "@/app/generated/prisma/client";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";

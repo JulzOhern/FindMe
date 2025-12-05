@@ -4,7 +4,7 @@ import { getPosition } from "@/actions/position";
 import { requestFriendPosition } from "@/actions/request-friend-position";
 import { LayersControlSection } from "@/app/(main)/(home)/_components/layers-control-section";
 import { useOnlineUsersContext } from "@/context/online-users"
-import { User } from "@/generated/prisma/client";
+import { User } from "@/app/generated/prisma/client";
 import { pusherClient } from "@/lib/pusher";
 import { leafletMarkerIcon } from "@/utils/leaflet-marker-icon";
 import { useEffect, useMemo } from "react";

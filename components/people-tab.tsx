@@ -3,7 +3,7 @@ import { TabsContent } from './ui/tabs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { Friend, User } from '@/generated/prisma/client';
+import { Friend, User } from "@/app/generated/prisma/client";
 import { acceptRequest, addFriend, cancelRequest, declineRequest, unFriend } from '@/actions/people';
 import { cn } from '@/lib/utils';
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { Notification } from "@/generated/prisma/client";
+import { Notification } from "@/app/generated/prisma/client";
 import { getMe } from "@/GET/me";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";

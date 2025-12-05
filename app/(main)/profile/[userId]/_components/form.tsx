@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { User } from '@/generated/prisma/client'
+import { User } from "@/app/generated/prisma/client";
 import { ArrowLeft } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'

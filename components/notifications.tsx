@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog"
 import Image from "next/image";
 import Link from "next/link";
-import { Notification, User } from "@/generated/prisma/client";
+import { Notification, User } from "@/app/generated/prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useState, useTransition } from "react";
 import { deleteNotification, undoDeleteNotification } from "@/actions/delete-notification";

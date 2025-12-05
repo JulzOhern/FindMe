@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { User, Notification } from "@/generated/prisma/client";
+import { User, Notification } from "@/app/generated/prisma/client";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
