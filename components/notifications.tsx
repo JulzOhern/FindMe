@@ -158,7 +158,7 @@ export function Notifications({ me, notifications }: NotificationsProps) {
         <div className="max-h-87 divide-y overflow-y-auto">
           {notifications && notifications.length > 0 ? (
             notifications.map((n) => (
-              <NotificationCards n={n} />
+              <NotificationCards n={n} key={n.id} />
             ))
           ) : (
             <div className="p-6 text-center text-gray-500 text-sm">
@@ -198,7 +198,6 @@ function NotificationCards({ n }: { n: Notification & { sender: User | null } })
 
   return (
     <div
-      key={n.id}
       className={cn("flex items-start gap-3 p-4 transition relative",
         n.isRead ? "hover:bg-gray-100" : "bg-blue-100"
       )}
