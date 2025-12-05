@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
+const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
 
 const UPLOADTHING_APP_ID = process.env.UPLOADTHING_APP_ID
 
 const nextConfig: NextConfig = {
   /* config options here */
+  webpack: (config, { isServer }) => {
+    // Only apply the plugin to the server-side bundles
+    if (isServer) {
+      config.plugins.push(new PrismaPlugin());
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
@@ -16,12 +24,7 @@ const nextConfig: NextConfig = {
         pathname: "/f/*",
       },
     ]
-  },
-  outputFileTracingIncludes: {
-    // This tells Next.js to trace and include the Prisma client files
-    '/api/**/*': ['./node_modules/.prisma/client/**/*'],
-    '/*': ['./node_modules/.prisma/client/**/*'],
-  },
+  }
 };
 
 export default nextConfig;
