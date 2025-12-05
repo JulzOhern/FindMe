@@ -5,14 +5,14 @@ const UPLOADTHING_APP_ID = process.env.UPLOADTHING_APP_ID
 
 const nextConfig: NextConfig = {
   /* config options here */
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Only apply the plugin to the server-side bundles
     if (isServer) {
-      config.plugins.push(new PrismaPlugin());
+      config.plugins = [...config.plugins, new PrismaPlugin()]
     }
     return config;
   },
-  turbopack: {},
   images: {
     remotePatterns: [
       {
