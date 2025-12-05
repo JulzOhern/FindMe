@@ -1,3 +1,4 @@
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 import type { NextConfig } from "next";
 
 const UPLOADTHING_APP_ID = process.env.UPLOADTHING_APP_ID
@@ -16,7 +17,13 @@ const nextConfig: NextConfig = {
         pathname: "/f/*",
       },
     ]
-  }
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins = [...config.plugins, new PrismaPlugin()];
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
