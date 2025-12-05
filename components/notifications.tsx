@@ -17,15 +17,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Notification, User } from "@/generated/prisma/client";
 import { formatDistanceToNow } from "date-fns";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { deleteNotification, undoDeleteNotification } from "@/actions/delete-notification";
 import { toast } from "sonner";
+import { pusherClient } from "@/lib/pusher";
+import { revalidateNotif } from "@/actions/revalidate-notif";
 
 type NotificationsProps = {
+  me: User | null
   notifications: (Notification & { sender: User | null })[] | null;
 };
 
-export function Notifications({ notifications }: NotificationsProps) {
+export function Notifications({ me, notifications }: NotificationsProps) {
   const count = notifications?.length || 0;
   const [isPending, setTransition] = useTransition();
 
@@ -42,6 +45,19 @@ export function Notifications({ notifications }: NotificationsProps) {
         .catch(() => toast.error("Something went wrong"));
     })
   }
+
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`private-channel-${me?.id}`);
+
+    channel.bind("friend-request", () => revalidateNotif())
+    channel.bind("accept-request", () => revalidateNotif())
+
+    return () => {
+      channel.unbind("friend-request");
+      channel.unbind("accept-request");
+      pusherClient.unsubscribe(`private-channel-${me?.id}`)
+    }
+  }, [me?.id]);
 
   return (
     <Popover>

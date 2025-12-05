@@ -36,7 +36,7 @@ export function Header({ me, notifications }: FloatingElementsProps) {
 
       {/* Profile Avatar */}
       <div className="fixed top-4 right-4 flex items-center gap-3 px-3 py-2 z-1000">
-        <Notifications notifications={notifications} />
+        <Notifications me={me} notifications={notifications} />
 
         <Button
           onClick={() => toggle()}

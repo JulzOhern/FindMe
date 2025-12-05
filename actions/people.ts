@@ -3,6 +3,7 @@
 import { getMe } from "@/GET/me";
 import { initWebPush } from "@/lib/initialize-webpush";
 import { prisma } from "@/lib/prisma";
+import { pusherServer } from "@/lib/pusher";
 import { sendNotification } from "@/utils/send-notification";
 import { revalidatePath } from "next/cache";
 
@@ -56,6 +57,8 @@ export async function addFriend(receiverId: string) {
     const subscription = receiver.webPushSubscription as string;
     await sendNotification(title, body, subscription);
   }
+
+  pusherServer.trigger(`private-channel-${receiverId}`, "friend-request", {});
 
   revalidatePath(`/user/${receiverId}`);
   return data;
@@ -126,6 +129,8 @@ export async function acceptRequest(receiverId: string) {
     const subscription = receiver.webPushSubscription as string;
     await sendNotification(title, body, subscription);
   }
+
+  pusherServer.trigger(`private-channel-${receiverId}`, "accept-request", {});
 
   revalidatePath(`/user/${receiverId}`);
   return data;
