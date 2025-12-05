@@ -16,7 +16,12 @@ const nextConfig: NextConfig = {
         pathname: "/f/*",
       },
     ]
-  }
+  },
+  outputFileTracingIncludes: {
+    // This tells Next.js to trace and include the Prisma client files
+    '/api/**/*': ['./node_modules/.prisma/client/**/*'],
+    '/*': ['./node_modules/.prisma/client/**/*'],
+  },
 };
 
 export default nextConfig;
