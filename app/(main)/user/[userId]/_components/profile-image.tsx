@@ -1,7 +1,7 @@
 "use client";
 
 import { useOnlineUsersContext } from "@/context/online-users";
-import { User } from "@/app/generated/prisma/client";
+import { User } from "@/generated/prisma/client";
 import Image from "next/image";
 
 type ProfileImageProps = {

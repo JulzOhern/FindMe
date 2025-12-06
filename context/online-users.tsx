@@ -1,7 +1,7 @@
 "use client";
 
 import { getPosition } from "@/actions/position";
-import { User } from "@/app/generated/prisma/client";
+import { User } from "@/generated/prisma/client";
 import { pusherClient } from "@/lib/pusher";
 import { Members } from "pusher-js";
 import { createContext, useContext, useEffect, useState } from "react";

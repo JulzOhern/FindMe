@@ -8,7 +8,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { LayersControlSection } from './layers-control-section';
 import { useEffect, useMemo } from 'react';
 import { RoutingMachine } from './routing-machine';
-import { User } from "@/app/generated/prisma/client";
+import { User } from '@/generated/prisma/client';
 import { pusherClient } from '@/lib/pusher';
 import { getPosition } from '@/actions/position';
 import { useOnlineUsersContext } from '@/context/online-users';

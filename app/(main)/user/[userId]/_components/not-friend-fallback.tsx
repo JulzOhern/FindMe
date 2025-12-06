@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from '@/components/ui/button'
-import { Friend, User } from "@/app/generated/prisma/client";
+import { Friend, User } from '@/generated/prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserCheck, UserPlus, UserPlus2, UserX } from 'lucide-react'
 import { cn } from '@/lib/utils';
