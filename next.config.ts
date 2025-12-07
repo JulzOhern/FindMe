@@ -4,6 +4,10 @@ const UPLOADTHING_APP_ID = process.env.UPLOADTHING_APP_ID
 
 const nextConfig: NextConfig = {
   /* config options here */
+  outputFileTracingIncludes: {
+    "/api/**/*": ["./node_modules/.prisma/client/**/*"],
+    "/**/*": ["./node_modules/.prisma/client/**/*"],
+  },
   images: {
     remotePatterns: [
       {
