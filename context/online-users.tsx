@@ -45,7 +45,8 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     });
 
     return () => {
-      pusherClient.disconnect();
+      channel.unbind()
+      pusherClient.unsubscribe("presence-online-users");
     };
   }, []);
 
