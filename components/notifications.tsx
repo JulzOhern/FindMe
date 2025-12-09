@@ -202,29 +202,24 @@ function NotificationCards({ n }: { n: Notification & { sender: User | null } })
         n.isRead ? "hover:bg-gray-100" : "bg-blue-100"
       )}
     >
-      {/* Avatar + text inside link */}
-      <Link
-        href={`/user/${n.sender?.id}`}
-        className="flex-1 flex gap-3"
-      >
-        <Image
-          src={n.sender?.image ?? "/default-avatar.png"}
-          alt="Sender Profile Picture"
-          width={100}
-          height={120}
-          className="w-10 h-10 object-cover rounded-full"
-        />
+      {/* Avatar */}
+      <Image
+        src={n.sender?.image ?? "/default-avatar.png"}
+        alt="Sender Profile Picture"
+        width={100}
+        height={120}
+        className="w-10 h-10 object-cover rounded-full shrink-0"
+      />
 
-        <div>
-          <p className="font-medium">{n.title}</p>
-          <p className="text-sm text-gray-600">{n.body}</p>
-          <p className="text-xs text-gray-400 mt-1">
-            {formatDistanceToNow(new Date(n.createdAt), {
-              addSuffix: true,
-            })}
-          </p>
-        </div>
-      </Link>
+      <div>
+        <p className="font-medium">{n.title}</p>
+        <p className="text-sm text-gray-600">{n.body}</p>
+        <p className="text-xs text-gray-400 mt-1">
+          {formatDistanceToNow(new Date(n.createdAt), {
+            addSuffix: true,
+          })}
+        </p>
+      </div>
 
       {/* 3 dots menu OUTSIDE the link */}
       <DropdownMenu>
