@@ -15,6 +15,7 @@ import { useOnlineUsersContext } from '@/context/online-users';
 import { useTrackFriendsStore } from '@/lib/zustand';
 import { leafletMarkerIcon } from '@/utils/leaflet-marker-icon';
 import { LocateControl } from './locate-control';
+import { Loader2 } from 'lucide-react';
 
 const DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
@@ -47,7 +48,7 @@ export default function Map({ me }: MapProps) {
       channel.unbind("position-request")
       pusherClient.unsubscribe(`private-friend-request-${me?.id}`)
     }
-  }, [onlineUsers, me?.id])
+  }, [me?.id])
 
   const myPosition = useMemo(() => {
     const myPosition = onlineUsers.find(u => u.id === me?.id);
@@ -58,49 +59,61 @@ export default function Map({ me }: MapProps) {
   const friendPosition = useMemo(() => {
     const friend = onlineUsers.find(u => u.id === userIdToTrack);
     if (!friend?.lat || !friend.lng) return null
-    return { ...friend, latLng: { lat: friend.lat, lng: friend.lng } }
+    return { name: friend.name, image: friend.image, lat: friend.lat || 0, lng: friend.lng || 0 };
   }, [onlineUsers, userIdToTrack]);
 
-  const myIcon = leafletMarkerIcon(me?.image);
-  const friendIcon = leafletMarkerIcon(friendPosition?.image);
+  const waypointsMemo = useMemo(() => {
+    if (!myPosition || !friendPosition) return [];
+    return [
+      { lat: myPosition.lat, lng: myPosition.lng },
+      { lat: friendPosition.lat, lng: friendPosition.lng }
+    ];
+  }, [myPosition?.lat, myPosition?.lng, friendPosition?.lat, friendPosition?.lng]);
+
+  const myIcon = useMemo(() => leafletMarkerIcon(me?.image), [me?.image]);
+  const friendIcon = useMemo(() => leafletMarkerIcon(friendPosition?.image), [friendPosition?.image]);
+
+  if (!me || !myPosition) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <Loader2 className='animate-spin' />
+      </div>
+    )
+  }
 
   return (
-    <>
-      {myPosition && (
-        <MapContainer
-          style={{ minHeight: '100vh' }}
-          center={[myPosition.lat, myPosition.lng]}
-          zoom={13}
-          zoomControl={false}
-          scrollWheelZoom={true}
-          fadeAnimation
+    <MapContainer
+      style={{ minHeight: '100vh' }}
+      center={[myPosition.lat, myPosition.lng]}
+      zoom={13}
+      zoomControl={false}
+      scrollWheelZoom={true}
+      fadeAnimation
+    >
+      {!friendPosition && (
+        <Marker
+          position={[myPosition.lat, myPosition.lng]}
+          icon={myIcon}
         >
-          {!friendPosition && (
-            <Marker
-              position={[myPosition.lat, myPosition.lng]}
-              icon={myIcon}
-            >
-              <Popup>
-                <b>{me?.name} (you)</b><br />You are here!
-              </Popup>
-            </Marker>
-          )}
-
-          {friendPosition && (
-            <RoutingMachine
-              waypoints={[myPosition, friendPosition.latLng]}
-              myIcon={myIcon}
-              friendIcon={friendIcon}
-              myMarkerText={`<b>${me?.name} (you)</b><br />You are here!`}
-              friendMarkerText={`<b>${friendPosition.name}</b> (friend)<br />Your friend is here!`}
-            />
-          )}
-
-          <ZoomControl position='bottomleft' />
-          <LocateControl />
-          <LayersControlSection />
-        </MapContainer>
+          <Popup>
+            <b>{me?.name} (you)</b><br />You are here!
+          </Popup>
+        </Marker>
       )}
-    </>
+
+      {friendPosition && (
+        <RoutingMachine
+          waypoints={waypointsMemo}
+          myIcon={myIcon}
+          friendIcon={friendIcon}
+          myMarkerText={`<b>${me?.name} (you)</b><br />You are here!`}
+          friendMarkerText={`<b>${friendPosition.name}</b> (friend)<br />Your friend is here!`}
+        />
+      )}
+
+      <ZoomControl position='bottomleft' />
+      <LocateControl />
+      <LayersControlSection />
+    </MapContainer>
   )
 }
