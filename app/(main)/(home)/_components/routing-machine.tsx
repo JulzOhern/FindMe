@@ -28,7 +28,7 @@ export const RoutingMachine = memo(({
 
     const routingControl = (L as any).Routing.control({
       router: IS_PRODUCTION ? new (L as any).Routing.GraphHopper(process.env.NEXT_PUBLIC_GRAPH_HOPPER_API_KEY) : null,
-      routeWhileDragging: true,
+      routeWhileDragging: false,
       showAlternatives: true,
       lineOptions: { styles: [{ color: 'blue' }] },
       addWaypoints: false,
