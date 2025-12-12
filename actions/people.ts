@@ -124,8 +124,8 @@ export async function acceptRequest(receiverId: string) {
 
   const receiver = await prisma.user.findUnique({ where: { id: receiverId } })
   if (receiver) {
-    const title = "Friend request";
-    const body = `${me?.name} wants to be your friend`;
+    const title = "Friend Request Accepted";
+    const body = `${me?.name} accepted your friend request`;
     const subscription = receiver.webPushSubscription as string;
     await sendNotification(title, body, subscription);
   }
