@@ -83,7 +83,7 @@ export default function Map({ me }: MapProps) {
     const friend = onlineUsers.find(u => u.id === userIdToTrack);
     if (!friend?.lat || !friend.lng) return null
     return { name: friend.name, image: friend.image, lat: friend.lat || 0, lng: friend.lng || 0 };
-  }, [userIdToTrack]);
+  }, [onlineUsers, userIdToTrack]);
 
   const waypointsMemo = useMemo(() => {
     if (!myPosition || !friendPosition) return [];

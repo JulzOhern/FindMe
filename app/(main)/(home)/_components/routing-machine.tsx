@@ -42,7 +42,6 @@ export const RoutingMachine = memo(({
         else marker.bindPopup(friendMarkerText);
         return marker;
       }
-
     }).addTo(map);
 
     routingControlRef.current = routingControl;
