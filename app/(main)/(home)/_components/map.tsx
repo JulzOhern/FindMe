@@ -6,7 +6,7 @@ import 'lrm-graphhopper';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { LayersControlSection } from './layers-control-section';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RoutingMachine } from './routing-machine';
 import { User } from '@/generated/prisma/client';
 import { pusherClient } from '@/lib/pusher';
@@ -16,6 +16,7 @@ import { useTrackFriendsStore } from '@/lib/zustand';
 import { leafletMarkerIcon } from '@/utils/leaflet-marker-icon';
 import { LocateControl } from './locate-control';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const DefaultIcon = L.icon({
   iconUrl: icon as unknown as string,
@@ -35,13 +36,41 @@ type MapProps = {
 export default function Map({ me }: MapProps) {
   const { onlineUsers } = useOnlineUsersContext();
   const userIdToTrack = useTrackFriendsStore(s => s.userId);
+  const [myPosition, setMyPosition] = useState<{ lat: number, lng: number } | null>(null)
+
+  // Get current position
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser')
+      return
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords
+        setMyPosition({ lat: latitude, lng: longitude })
+        getPosition(latitude, longitude)
+      },
+      (err) => {
+        toast.error("Error getting your location")
+        console.error(err)
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 }
+    )
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
 
   useEffect(() => {
     const channel = pusherClient.subscribe(`private-friend-request-${me?.id}`);
 
-    channel.bind("position-request", (data: { userId: string }) => {
-      const myPosition = onlineUsers.find(u => u.id === data.userId);
-      getPosition(myPosition?.lat || 0, myPosition?.lng || 0);
+    channel.bind("position-request", () => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        getPosition(latitude, longitude);
+      })
     })
 
     return () => {
@@ -50,17 +79,11 @@ export default function Map({ me }: MapProps) {
     }
   }, [me?.id])
 
-  const myPosition = useMemo(() => {
-    const myPosition = onlineUsers.find(u => u.id === me?.id);
-    if (!myPosition?.lat || !myPosition.lng) return null
-    return { lat: myPosition.lat || 0, lng: myPosition.lng };
-  }, [onlineUsers, me?.id]);
-
   const friendPosition = useMemo(() => {
     const friend = onlineUsers.find(u => u.id === userIdToTrack);
     if (!friend?.lat || !friend.lng) return null
     return { name: friend.name, image: friend.image, lat: friend.lat || 0, lng: friend.lng || 0 };
-  }, [onlineUsers, userIdToTrack]);
+  }, [userIdToTrack]);
 
   const waypointsMemo = useMemo(() => {
     if (!myPosition || !friendPosition) return [];

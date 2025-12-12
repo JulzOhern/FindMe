@@ -50,34 +50,17 @@ export function OnlineUsersProvider({ children }: { children: React.ReactNode })
     };
   }, []);
 
-  // Get current position
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      toast.error('Geolocation is not supported by your browser')
-      return
-    }
-
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords
-        getPosition(latitude, longitude)
-      },
-      (err) => console.error(err),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 }
-    )
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId)
-    }
-  }, [])
-
   // Listen for realtime position updates
   useEffect(() => {
     const channel = pusherClient.subscribe("position-update")
 
     channel.bind("position", (data: { userId: string, lat: number, lng: number }) => {
       setOnlineUsers(prev =>
-        prev.map(u => u.id === data.userId ? { ...u, lat: data.lat, lng: data.lng } : u)
+        prev.map(u =>
+          u.id === data.userId && (u.lat !== data.lat || u.lng !== data.lng)
+            ? { ...u, lat: data.lat, lng: data.lng }
+            : u
+        )
       );
     })
 
